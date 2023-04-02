@@ -1,0 +1,17 @@
+{
+  "name": "codeshape",
+  "version": "0.1.0",
+  "description": "Code-style rules for eslint, typescript-eslint, and stylelint",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axtk/codeshape.git"
+  },
+  "keywords": [
+    "code style",
+    "eslint",
+    "typescript-eslint",
+    "stylelint"
+  ],
+  "author": "axtk",
+  "license": "ISC"
+}
