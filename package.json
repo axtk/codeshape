@@ -2,6 +2,9 @@
   "name": "codeshape",
   "version": "0.1.0",
   "description": "Code-style rules for eslint, typescript-eslint, and stylelint",
+  "scripts": {
+    "lint": "node utils/run.js --js configs rules utils"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/axtk/codeshape.git"
@@ -13,5 +16,12 @@
     "stylelint"
   ],
   "author": "axtk",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.37.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-markdown": "^3.0.0",
+    "eslint-plugin-prefer-let": "^3.0.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0"
+  }
 }
