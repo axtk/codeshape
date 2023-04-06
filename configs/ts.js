@@ -34,6 +34,7 @@ module.exports = {
                 },
             },
             rules: {
+                ...jsConfig.rules,
                 ...ts.specific,
                 ...ts.general,
                 ...ts.formatting,
