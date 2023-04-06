@@ -7,12 +7,14 @@ const ts = {
     imports: require('../rules/ts-imports'),
 };
 
+const mdRules = require('../rules/md');
+
 module.exports = {
     ...jsConfig,
     overrides: [
         ...jsConfig.overrides,
         {
-            files: ['*.ts', '*.tsx'],
+            files: ['*.ts?(x)', '*.md/*.ts?(x)'],
             extends: [
                 ...jsConfig.extends,
                 'plugin:@typescript-eslint/recommended',
@@ -37,6 +39,10 @@ module.exports = {
                 ...ts.formatting,
                 ...ts.imports,
             },
+        },
+        {
+            files: ['*.md/*.ts?(x)'],
+            rules: mdRules,
         },
     ],
 };

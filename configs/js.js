@@ -4,6 +4,8 @@ const js = {
     imports: require('../rules/js-imports'),
 };
 
+const mdRules = require('../rules/md');
+
 module.exports = {
     env: {
         es2022: true,
@@ -18,6 +20,7 @@ module.exports = {
         'import',
         'simple-import-sort',
         'prefer-let',
+        'markdown',
     ],
     parserOptions: {
         sourceType: 'module',
@@ -36,6 +39,10 @@ module.exports = {
             env: {
                 jest: true,
             },
+        },
+        {
+            files: ['*.md/*.js?(x)'],
+            rules: mdRules,
         },
     ],
     root: true,
