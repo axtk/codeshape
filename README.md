@@ -48,9 +48,9 @@ as in the mathematical notation
 
 - arrow function brackets only when necessary
 
-`const f = x => x + 10;` (akin to mapping a scalar *x*, normally unbracketed)
+`let f = x => x + 10;` (akin to mapping a scalar *x*, normally unbracketed)
 
-`const g = (x, y) => x + y - 10;` (akin to mapping a vector *(x, y)*, normally bracketed)
+`let g = (x, y) => x + y - 10;` (akin to mapping a vector *(x, y)*, normally bracketed)
 
 - preferring `let` over `const`
 
