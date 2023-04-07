@@ -54,4 +54,6 @@ as in the mathematical notation
 
 ### preferring `let` over `const`
 
-By [definition](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const), `const` is for values that *can't be redeclared*, rather than for values that *are not reassigned*. `const` is for values that are *intended* to be unchanged (like *π*), while `let` is for any other variables whether they turn out to be changed or not.
+It gives simple decision making: `let` is good for all variables, that's the default.
+
+`const` is an option to emphasize and communicate to other developers that a certain value should not be reassigned, which applies to intentionally fixed values and normally doesn't apply to one-time local variables. It is also in line with the [definition](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const): `const` is for values that *can't be* reassigned, rather than for values that *are not* reassigned.
