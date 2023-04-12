@@ -7,9 +7,9 @@ Code-style rules for *eslint*, *typescript-eslint*, and *stylelint*
 
 ## Features
 
-### consistent spacing for arrays and objects
+### Consistent spacing for arrays and objects
 
-as in the mathematical notation of vectors and set elements: *(x, y, z)*, *{x, y, z}*
+As in the mathematical notation of vectors and set elements: *(x, y, z)*, *{x, y, z}*.
 
 ```ts
 [x, y, z]
@@ -38,22 +38,24 @@ else {
 }
 ```
 
-### keywords are spaced, `function()` is not
+### Keywords are spaced, `function()` is not
 
-as in the mathematical notation
+As in the mathematical notation.
 
-`function(params)`, `setCustomValue(value)` as in *f(x)*, no space before the bracket
+`function(params)`, `setCustomValue(value)` as in *f(x)*, no space before the bracket.
 
-`if (x)`, `for (let i...)`, `while (ok)` as in regular logical statements, with a space before the conditional expression
+`if (x)`, `for (let i...)`, `while (ok)` as in regular logical statements, with a space before the conditional expression.
 
-### arrow function brackets only when necessary
+### Arrow function brackets only when necessary
 
-`let f = x => x + 10;` (akin to mapping a scalar *x*, normally unbracketed)
+`let f = x => x + 10;` — akin to mapping a scalar *x*, normally unbracketed.
 
-`let g = (x, y) => x + y - 10;` (akin to mapping a vector *(x, y)*, normally bracketed)
+`let g = (x, y) => x + y - 10;` — akin to mapping a vector *(x, y)*, normally bracketed.
 
-### preferring `let` over `const`
+### Preferring `let` over `const`
 
-It gives simple decision making: `let` is good for all variables, that's the default.
+Motivation:
 
-`const` is an option to emphasize and communicate to other developers that a certain value should not be reassigned, which applies to intentionally fixed values and normally doesn't apply to one-time local variables. It is also in line with the [definition](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const): `const` is for values that *can't be* reassigned, rather than for values that *are not* reassigned.
+- Simple decision making, reduced cognitive load: `let` is good for all variables, `let` is the default;
+- Adherence to the semantic meaning of constants: `const` is an option to emphasize and communicate to other developers that a certain value should not be reassigned, which applies to intentionally fixed values and normally doesn't semantically apply to one-time local variables;
+- Compliance to the [definition](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const): `const` is for values that *can't be* reassigned, rather than for values that *are not* reassigned.
