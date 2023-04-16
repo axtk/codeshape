@@ -43,7 +43,16 @@ module.exports = {
     'operator-assignment': 'error',
     'prefer-arrow-callback': 'error',
     'prefer-const': 'off',
-    'prefer-destructuring': ['error', {object: true, array: false}],
+    'prefer-destructuring': ['error', {
+        VariableDeclarator: {
+            array: false,
+            object: true,
+        },
+        AssignmentExpression: {
+            array: false,
+            object: false,
+        },
+    }],
     'prefer-let/prefer-let': 'error',
     'prefer-numeric-literals': 'error',
     'prefer-object-has-own': 'error',
