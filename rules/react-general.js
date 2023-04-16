@@ -9,7 +9,6 @@ module.exports = {
     'react/jsx-indent': ['error', 4, {indentLogicalExpressions: true}],
     'react/jsx-indent-props': 'error',
     'react/jsx-newline': ['error', {prevent: true}],
-    'react/jsx-no-constructed-context-values': 'error',
     'react/jsx-no-leaked-render': 'error',
     'react/jsx-no-useless-fragment': ['error', {allowExpressions: true}],
     'react/jsx-pascal-case': ['error', {allowNamespace: true}],
