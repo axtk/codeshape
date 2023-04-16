@@ -13,6 +13,7 @@ module.exports = {
     'simple-import-sort/imports': ['error', {
         groups: [[
             // external
+            '^node:',
             '^express(/|$)',
             '^react(/|$)',
             '^react-dom(/|$)',
