@@ -7,6 +7,7 @@ const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
 
 let args = process.argv.slice(2);
+let cwd = process.cwd();
 
 function getList(dir) {
     let dirPath = join(__dirname, '..', dir);
@@ -60,7 +61,7 @@ function getConfig() {
             if (configKey)
                 argConfig[configKey] ??= [];
             else if (key === 'config' && args[i + 1])
-                configPath = join(process.cwd(), args[i + 1]);
+                configPath = join(cwd, args[i + 1]);
             else if (['fix', 'debug', 'sequential'].includes(key))
                 argConfig[key] = true;
             else if (presetKeys.includes(key))
@@ -70,7 +71,7 @@ function getConfig() {
             let key = arg.slice(1);
 
             if (key === 'c' && args[i + 1])
-                configPath = join(process.cwd(), args[i + 1]);
+                configPath = join(cwd, args[i + 1]);
         }
         else if (configKey)
             argConfig[configKey].push(arg);
@@ -85,7 +86,7 @@ function getConfig() {
         if (configPath)
             fileConfig = require(configPath);
         else if (!args.includes('--ignore-config'))
-            fileConfig = require(join(process.cwd(), './.lintrc'));
+            fileConfig = require(join(cwd, './.lintrc'));
     }
     catch {}
 
@@ -125,6 +126,11 @@ function stop(ok, config) {
     if (config.debug) {
         console.log('Config:');
         console.log(JSON.stringify(config, null, 2));
+        console.log();
+
+        console.log('Working directory:');
+        console.log(cwd);
+        console.log();
     }
 
     if (args.includes('--help')) {
