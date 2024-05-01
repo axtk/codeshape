@@ -103,10 +103,11 @@ function execConfigEntry(key, dirs, config) {
         cmd = `npx stylelint --config ${configPath} ${target}${config.fix ? ' --fix' : ''}`;
     }
     else {
+        let env = 'cross-env ESLINT_USE_FLAT_CONFIG=false ';
         let ext = '.js,.jsx' + (key === 'js' ? '' : ',.ts,.tsx') + ',.md';
 
-        cmd = `npx eslint -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext}` +
-            ' --no-eslintrc --no-config-lookup' +
+        cmd = `${env}npx eslint -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext}` +
+            ' --no-eslintrc' +
             (config.fix ? ' --fix' : '');
     }
 
