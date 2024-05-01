@@ -5,7 +5,6 @@ const {existsSync, readdirSync} = require('fs');
 const {join} = require('path');
 const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
-const {ensureConfigDeps} = require('./deps');
 
 let args = process.argv.slice(2);
 
@@ -148,9 +147,6 @@ function stop(ok, config) {
 
         return stop(false, config);
     }
-
-    if (!ensureConfigDeps(selectedConfigKeys))
-        return stop(false, config);
 
     try {
         if (config.sequential || config.parallel === false) {
