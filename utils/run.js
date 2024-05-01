@@ -105,7 +105,7 @@ function execConfigEntry(key, dirs, config) {
     else {
         let ext = '.js,.jsx' + (key === 'js' ? '' : ',.ts,.tsx') + ',.md';
 
-        cmd = `npx eslint -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext}` +
+        cmd = `npx eslint -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext} --no-eslintrc` +
             (config.fix ? ' --fix' : '');
     }
 
