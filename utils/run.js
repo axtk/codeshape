@@ -98,7 +98,7 @@ function execConfigEntry(key, dirs, config) {
     let cmd;
 
     if (stylelintConfigKeys.includes(key)) {
-        let root = dirs.length > 1 ? `(${dirs.join('|')})` : (dirs.join() || '.');
+        let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
         let target = `"${root}/**/*.${key === 'scss' ? '(css|scss)' : 'css'}"`;
 
         cmd = `npx stylelint --config ${configPath} ${target}${config.fix ? ' --fix' : ''}`;
