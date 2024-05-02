@@ -107,26 +107,36 @@ function createTempTsConfig(key, dirs, config) {
         }
 
         let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
-
-        let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
-        let ext = '{js,jsx' + (key === 'js' ? '' : ',ts,tsx') + ',md}';
+        let ext = '{js,jsx,ts,tsx,md}';
 
         let tempTsConfig = {
             extends: './tsconfig.json',
-            includes: `${root}/**/*.${ext}`,
+            includes: dirs.length ? dirs.map(dir => `${dir}/**/*.${ext}`) : [`*.${ext}`],
             exludes: tsConfig.excludes ?? [],
         };
 
-        writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 2));
-
         if (config.debug) {
-            console.log('Added temp tsconfig:');
+            console.log('Temp tsconfig:');
             console.log(tempTsConfigFilePath);
             console.log(JSON.stringify(tempTsConfig, null, 2));
             console.log();
         }
+
+        writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 2));
+
+        if (config.debug) {
+            console.log('Created temp tsconfig:');
+            console.log(tempTsConfigFilePath);
+            console.log();
+        }
     }
-    catch {}
+    catch (error) {
+        if (config.debug) {
+            console.log('Failed to create temp tsconfig');
+            console.log(error);
+            console.log();
+        }
+    }
 }
 
 function removeTempTsConfig(config) {
@@ -141,7 +151,13 @@ function removeTempTsConfig(config) {
             console.log();
         }
     }
-    catch {}
+    catch (error) {
+        if (config.debug) {
+            console.log('Failed to remove temp tsconfig');
+            console.log(error);
+            console.log();
+        }
+    }
 }
 
 async function execConfigEntry(key, dirs, config) {
