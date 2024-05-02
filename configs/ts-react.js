@@ -16,7 +16,7 @@ module.exports = {
                 ecmaFeatures: {
                     jsx: true,
                 },
-                project: ['./tsconfig.json'],
+                project: ['./tsconfig.codeshape.json'],
             },
             extends: [
                 'plugin:react/recommended',

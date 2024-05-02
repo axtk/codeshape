@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const {existsSync, readdirSync} = require('fs');
+const {existsSync, readdirSync, removeFileSync, writeFileSync} = require('fs');
 const {join} = require('path');
 const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
 
 let args = process.argv.slice(2);
 let cwd = process.cwd();
+
+let tempTsConfigFileName = 'tsconfig.codeshape.json';
 
 function getList(dir) {
     let dirPath = join(__dirname, '..', dir);
@@ -93,9 +95,58 @@ function getConfig() {
     return {...fileConfig, ...argConfig};
 }
 
-function execConfigEntry(key, dirs, config) {
+function createTempTsConfig(key, dirs, config) {
+    try {
+        let tsConfig;
+
+        try {
+            tsConfig = require('./tsconfig.json');
+        }
+        catch {
+            tsConfig = {};
+        }
+
+        let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
+
+        let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
+        let ext = '{js,jsx' + (key === 'js' ? '' : ',ts,tsx') + ',md}';
+
+        let tempTsConfig = {
+            extends: './tsconfig.json',
+            includes: `${root}/**/*.${ext}`,
+            exludes: tsConfig.excludes ?? [],
+        };
+
+        writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 2));
+
+        if (config.debug) {
+            console.log('Added temp tsconfig:');
+            console.log(tempTsConfigFilePath);
+            console.log(JSON.stringify(tempTsConfig, null, 2));
+            console.log();
+        }
+    }
+    catch {}
+}
+
+function removeTempTsConfig(config) {
+    try {
+        let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
+
+        removeFileSync(tempTsConfigFilePath);
+
+        if (config.debug) {
+            console.log('Removed temp tsconfig:');
+            console.log(tempTsConfigFilePath);
+            console.log();
+        }
+    }
+    catch {}
+}
+
+async function execConfigEntry(key, dirs, config) {
     let configPath = join(__dirname, `../configs/${key}.js`);
-    let cmd;
+    let cmd, tsMode = false;
 
     if (stylelintConfigKeys.includes(key)) {
         let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
@@ -104,8 +155,10 @@ function execConfigEntry(key, dirs, config) {
         cmd = `npx stylelint --config ${configPath} ${target}${config.fix ? ' --fix' : ''}`;
     }
     else {
+        let tsMode = key !== 'js';
+
         let env = 'cross-env ESLINT_USE_FLAT_CONFIG=false ';
-        let ext = '.js,.jsx' + (key === 'js' ? '' : ',.ts,.tsx') + ',.md';
+        let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
 
         cmd = `${env}npx eslint -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext}` +
             ' --no-eslintrc' +
@@ -115,7 +168,12 @@ function execConfigEntry(key, dirs, config) {
     if (config.debug)
         console.log(cmd);
 
-    return exec(cmd);
+    if (tsMode) {
+        createTempTsConfig(key, dirs, config);
+        await exec(cmd);
+        removeTempTsConfig(config);
+    }
+    else await exec(cmd);
 }
 
 function stop(ok, config) {
