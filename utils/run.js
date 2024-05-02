@@ -95,7 +95,7 @@ function getConfig() {
     return {...fileConfig, ...argConfig};
 }
 
-function createTempTsConfig(key, dirs, config) {
+function createTempTsConfig(dirs, config) {
     try {
         let tsConfig;
 
@@ -171,7 +171,7 @@ async function execConfigEntry(key, dirs, config) {
         cmd = `npx stylelint --config ${configPath} ${target}${config.fix ? ' --fix' : ''}`;
     }
     else {
-        let tsMode = key !== 'js';
+        tsMode = key !== 'js';
 
         let env = 'cross-env ESLINT_USE_FLAT_CONFIG=false ';
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
@@ -185,7 +185,7 @@ async function execConfigEntry(key, dirs, config) {
         console.log(cmd);
 
     if (tsMode) {
-        createTempTsConfig(key, dirs, config);
+        createTempTsConfig(dirs, config);
         await exec(cmd);
         removeTempTsConfig(config);
     }
