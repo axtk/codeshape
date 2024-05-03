@@ -106,7 +106,7 @@ function createDebugEslintConfig(configPath) {
             let eslintConfig = require(configPath);
             let path = join(cwd, 'debug_eslint_config.json');
 
-            writeFileSync(path, JSON.stringify(eslintConfig, null, 2));
+            writeFileSync(path, JSON.stringify(eslintConfig, null, 4));
 
             console.log(`>> ${path}`);
         }
@@ -144,7 +144,7 @@ function createTempTsConfig(dirs, config) {
             console.log(JSON.stringify(tempTsConfig, null, 2));
         }
 
-        writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 2));
+        writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 4));
 
         if (config.debug) {
             console.log();
@@ -206,7 +206,7 @@ async function execConfigEntry(key, dirs, config) {
     }
 
     if (config.debug) {
-        createDebugEslintConfig();
+        createDebugEslintConfig(configPath);
 
         console.log();
         console.log('Command:');
