@@ -10,7 +10,7 @@ module.exports = {
     overrides: [
         ...tsConfig.overrides,
         {
-            files: ['*.tsx'],
+            files: ['**/*.tsx'],
             parser: '@typescript-eslint/parser',
             parserOptions: {
                 ecmaFeatures: {

@@ -14,7 +14,7 @@ module.exports = {
     overrides: [
         ...jsConfig.overrides,
         {
-            files: ['*.ts?(x)', '*.md/*.ts?(x)'],
+            files: ['**/*.ts?(x)', '**/*.md/*.ts?(x)'],
             extends: [
                 ...jsConfig.extends,
                 'plugin:@typescript-eslint/recommended',
@@ -42,7 +42,11 @@ module.exports = {
             },
         },
         {
-            files: ['*.md/*.ts?(x)'],
+            files: ['**/*.md/*.ts?(x)'],
+            parser: '@typescript-eslint/parser',
+            parserOptions: {
+                project: ['./tsconfig.codeshape.json'],
+            },
             rules: mdRules,
         },
     ],
