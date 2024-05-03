@@ -1,6 +1,6 @@
 {
   "name": "codeshape",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "Code-style rules for eslint, typescript-eslint, and stylelint",
   "bin": {
     "codeshape": "utils/run.js"
