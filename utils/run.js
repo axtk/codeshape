@@ -140,17 +140,13 @@ function createTempTsConfig(dirs, config) {
         if (config.debug) {
             console.log();
             console.log('Temp tsconfig:');
-            console.log(tempTsConfigFilePath);
             console.log(JSON.stringify(tempTsConfig, null, 2));
         }
 
         writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 4));
 
-        if (config.debug) {
-            console.log();
-            console.log('Created temp tsconfig:');
-            console.log(tempTsConfigFilePath);
-        }
+        if (config.debug)
+            console.log(`>> ${tempTsConfigFilePath}`);
     }
     catch (error) {
         if (config.debug) {
@@ -171,7 +167,7 @@ function removeTempTsConfig(config) {
             if (config.debug) {
                 console.log();
                 console.log('Removed temp tsconfig:');
-                console.log(tempTsConfigFilePath);
+                console.log(`<< ${tempTsConfigFilePath}`);
             }
         }
     }
@@ -218,7 +214,6 @@ async function execConfigEntry(key, dirs, config) {
     if (tsMode) {
         createTempTsConfig(dirs, config);
         await exec(cmd);
-        removeTempTsConfig(config);
     }
     else await exec(cmd);
 }
@@ -293,5 +288,8 @@ function stop(ok, config) {
             console.log(error?.stderr ?? error);
 
         stop(false, config);
+    }
+    finally {
+        removeTempTsConfig(config);
     }
 })();
