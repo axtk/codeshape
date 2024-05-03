@@ -12,7 +12,7 @@ module.exports = {
     'eqeqeq': 'error',
     'grouped-accessor-pairs': ['error', 'getBeforeSet'],
     'max-classes-per-file': 'error',
-    'max-lines': 'error',
+    'max-lines': ['error', {max: 350}],
     'max-params': 'error',
     'no-alert': 'error',
     'no-console': 'error',
