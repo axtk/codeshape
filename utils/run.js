@@ -96,7 +96,7 @@ function getConfig() {
     return {...fileConfig, ...argConfig};
 }
 
-function createDebugEslintConfig(configPath) {
+function createDebugEslintConfig(key, configPath) {
     try {
         console.log();
         console.log('Eslint config:');
@@ -104,7 +104,7 @@ function createDebugEslintConfig(configPath) {
 
         if (configPath) {
             let eslintConfig = require(configPath);
-            let path = join(cwd, 'debug_eslint_config.json');
+            let path = join(cwd, `debug_eslint_config.${key}.json`);
 
             writeFileSync(path, JSON.stringify(eslintConfig, null, 4));
 
@@ -206,7 +206,7 @@ async function execConfigEntry(key, dirs, config) {
     }
 
     if (config.debug) {
-        createDebugEslintConfig(configPath);
+        createDebugEslintConfig(key, configPath);
 
         console.log();
         console.log('Command:');
