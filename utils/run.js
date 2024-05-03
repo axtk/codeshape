@@ -189,18 +189,20 @@ async function execConfigEntry(key, dirs, config) {
     let cmd, tsMode = false;
 
     if (stylelintConfigKeys.includes(key)) {
+        let bin = join(__dirname, '../node_modules/.bin/stylelint');
         let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
         let target = `"${root}/**/*.${key === 'scss' ? '(css|scss)' : 'css'}"`;
 
-        cmd = `npx stylelint --config ${configPath} ${target}${config.fix ? ' --fix' : ''}`;
+        cmd = `${bin} --config ${configPath} ${target}${config.fix ? ' --fix' : ''}`;
     }
     else {
         tsMode = key !== 'js';
 
         let env = 'cross-env ESLINT_USE_FLAT_CONFIG=false ';
+        let bin = join(__dirname, '../node_modules/.bin/eslint');
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
 
-        cmd = `${env}npx eslint -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext}` +
+        cmd = `${env}${bin} -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext}` +
             ' --no-eslintrc' +
             (config.fix ? ' --fix' : '');
     }
