@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const {existsSync, readdirSync, removeFileSync, writeFileSync} = require('fs');
+const {existsSync, readdirSync, unlinkSync, writeFileSync} = require('fs');
 const {join} = require('path');
 const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
@@ -31,7 +31,8 @@ const configKeys = getList('configs');
 const stylelintConfigKeys = ['css'];
 
 function showGuide() {
-    console.log('\nOptions:');
+    console.log();
+    console.log('Options:');
     console.log('  --<config_key> <dir1> <dir2> ...');
     console.log('  --<preset_key> (experimental, currently unused)');
     console.log('  --fix');
@@ -95,6 +96,27 @@ function getConfig() {
     return {...fileConfig, ...argConfig};
 }
 
+function createDebugEslintConfig(configPath) {
+    try {
+        console.log();
+        console.log('Eslint config:');
+        console.log(configPath);
+
+        if (configPath) {
+            let eslintConfig = require(configPath);
+            let path = join(cwd, 'debug_eslint_config.json');
+
+            writeFileSync(path, JSON.stringify(eslintConfig, null, 2));
+
+            console.log(`>> ${path}`);
+        }
+    }
+    catch (error) {
+        console.log();
+        console.log(error);
+    }
+}
+
 function createTempTsConfig(dirs, config) {
     try {
         let tsConfig;
@@ -116,25 +138,25 @@ function createTempTsConfig(dirs, config) {
         };
 
         if (config.debug) {
+            console.log();
             console.log('Temp tsconfig:');
             console.log(tempTsConfigFilePath);
             console.log(JSON.stringify(tempTsConfig, null, 2));
-            console.log();
         }
 
         writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 2));
 
         if (config.debug) {
+            console.log();
             console.log('Created temp tsconfig:');
             console.log(tempTsConfigFilePath);
-            console.log();
         }
     }
     catch (error) {
         if (config.debug) {
+            console.log();
             console.log('Failed to create temp tsconfig');
             console.log(error);
-            console.log();
         }
     }
 }
@@ -143,19 +165,21 @@ function removeTempTsConfig(config) {
     try {
         let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
 
-        removeFileSync(tempTsConfigFilePath);
+        if (existsSync(tempTsConfigFilePath)) {
+            unlinkSync(tempTsConfigFilePath);
 
-        if (config.debug) {
-            console.log('Removed temp tsconfig:');
-            console.log(tempTsConfigFilePath);
-            console.log();
+            if (config.debug) {
+                console.log();
+                console.log('Removed temp tsconfig:');
+                console.log(tempTsConfigFilePath);
+            }
         }
     }
     catch (error) {
         if (config.debug) {
+            console.log();
             console.log('Failed to remove temp tsconfig');
             console.log(error);
-            console.log();
         }
     }
 }
@@ -181,13 +205,17 @@ async function execConfigEntry(key, dirs, config) {
             (config.fix ? ' --fix' : '');
     }
 
-    if (config.debug)
+    if (config.debug) {
+        createDebugEslintConfig();
+
+        console.log();
+        console.log('Command:');
         console.log(cmd);
+    }
 
     if (tsMode) {
         createTempTsConfig(dirs, config);
         await exec(cmd);
-        removeTempTsConfig(config);
     }
     else await exec(cmd);
 }
@@ -201,13 +229,13 @@ function stop(ok, config) {
     let config = getConfig();
 
     if (config.debug) {
+        console.log();
         console.log('Config:');
         console.log(JSON.stringify(config, null, 2));
-        console.log();
 
+        console.log();
         console.log('Working directory:');
         console.log(cwd);
-        console.log();
     }
 
     if (args.includes('--help')) {
@@ -232,6 +260,8 @@ function stop(ok, config) {
     }
 
     try {
+        console.log();
+
         if (config.sequential || config.parallel === false) {
             for (let key of selectedConfigKeys) {
                 console.log(`lint ${key}`);
@@ -260,5 +290,8 @@ function stop(ok, config) {
             console.log(error?.stderr ?? error);
 
         stop(false, config);
+    }
+    finally {
+        removeTempTsConfig(config);
     }
 })();
