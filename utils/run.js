@@ -216,6 +216,7 @@ async function execConfigEntry(key, dirs, config) {
     if (tsMode) {
         createTempTsConfig(dirs, config);
         await exec(cmd);
+        removeTempTsConfig(config);
     }
     else await exec(cmd);
 }
@@ -290,8 +291,5 @@ function stop(ok, config) {
             console.log(error?.stderr ?? error);
 
         stop(false, config);
-    }
-    finally {
-        removeTempTsConfig(config);
     }
 })();
