@@ -180,12 +180,24 @@ function removeTempTsConfig(config) {
     }
 }
 
+function getBin(name) {
+    let ownBin = join(__dirname, `../node_modules/.bin/${name}`);
+
+    if (existsSync(ownBin))
+        return ownBin;
+
+    let packageConfig = require(join(__dirname, '../package.json'));
+    let version = packageConfig.dependencies[name];
+
+    return `npx ${name}@${version}`;
+}
+
 async function execConfigEntry(key, dirs, config) {
     let configPath = join(__dirname, `../configs/${key}.js`);
     let cmd, tsMode = false;
 
     if (stylelintConfigKeys.includes(key)) {
-        let bin = join(__dirname, '../node_modules/.bin/stylelint');
+        let bin = getBin('stylelint');
         let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
         let target = `"${root}/**/*.${key === 'scss' ? '(css|scss)' : 'css'}"`;
 
@@ -195,7 +207,7 @@ async function execConfigEntry(key, dirs, config) {
         tsMode = key !== 'js';
 
         let env = 'cross-env ESLINT_USE_FLAT_CONFIG=false ';
-        let bin = join(__dirname, '../node_modules/.bin/eslint');
+        let bin = getBin('eslint');
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
 
         cmd = `${env}${bin} -c ${configPath} ${dirs.join(' ') || '.'} --ext ${ext}` +
