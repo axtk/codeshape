@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const {existsSync, readdirSync, unlinkSync, writeFileSync} = require('fs');
+const {existsSync, readdirSync, unlinkSync, writeFileSync, readFileSync} = require('fs');
 const {join} = require('path');
 const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
@@ -192,9 +192,33 @@ function getBin(name) {
     return `npx ${name}@${version}`;
 }
 
+function patchConfig(configPath, config) {
+    try {
+        let tsConfig = readFileSync(configPath).toString();
+        let fullTsConfigPath = join(cwd, './tsconfig.codeshape.json');
+
+        console.log('Patching config:');
+        console.log(fullTsConfigPath);
+        console.log();
+
+        tsConfig = tsConfig.replace(
+            /'\.\/tsconfig\.codeshape\.json'/g,
+            `'${fullTsConfigPath}'`,
+        );
+
+        writeFileSync(configPath, tsConfig);
+    }
+    catch (error) {
+        if (config.debug)
+            console.log(error);
+    }
+}
+
 async function execConfigEntry(key, dirs, config) {
     let configPath = join(__dirname, `../configs/${key}.js`);
     let cmd, tsMode = false;
+
+    patchConfig(configPath, config);
 
     if (stylelintConfigKeys.includes(key)) {
         let bin = getBin('stylelint');
