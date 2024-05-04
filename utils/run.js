@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const {existsSync, readdirSync, unlinkSync, writeFileSync, readFileSync} = require('fs');
+const {existsSync, readdirSync, unlinkSync, writeFileSync} = require('fs');
 const {join} = require('path');
 const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
