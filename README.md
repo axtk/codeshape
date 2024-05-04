@@ -21,9 +21,9 @@ As in the mathematical notation of vectors and set elements: *(x, y, z)*, *{x, y
 import {x} from './x';
 ```
 
-### Stroustrup identation style
+### Stroustrup indentation style
 
-`else` and `catch` on the next line after `}` allow for comments covering the entire following block to be consistently located above the block
+`else` and `catch` on the next line after `}` allow for comments covering the entire following block to be consistently located above the block:
 
 ```ts
 // this is a sample comment to the condition
