@@ -6,6 +6,7 @@ const react = {
 };
 
 const mdRules = require('../rules/md');
+const mdxRules = require('../rules/mdx');
 
 module.exports = {
     ...tsConfig,
@@ -67,7 +68,10 @@ module.exports = {
         },
         {
             files: ['**/*.md/*.[jt]sx'],
-            rules: mdRules,
+            rules: {
+                ...mdRules,
+                ...mdxRules,
+            },
         },
     ],
 };

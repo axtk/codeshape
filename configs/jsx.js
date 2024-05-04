@@ -6,6 +6,7 @@ const react = {
 };
 
 const mdRules = require('../rules/md');
+const mdxRules = require('../rules/mdx');
 
 module.exports = {
     ...jsConfig,
@@ -39,7 +40,10 @@ module.exports = {
         },
         {
             files: ['**/*.md/*.jsx'],
-            rules: mdRules,
+            rules: {
+                ...mdRules,
+                ...mdxRules,
+            },
         },
     ],
 };
