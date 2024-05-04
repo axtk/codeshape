@@ -5,7 +5,7 @@
 ## Usage
 
 - Install `codeshape` into a project: `npm i -D codeshape` (or globally: `npm i -g codeshape`);
-- Run `codeshape` in a project directory.
+- Run `codeshape` in the project directory.
 
 ## Features
 
@@ -23,7 +23,7 @@ import {x} from './x';
 
 ### Stroustrup indentation style
 
-`else` and `catch` on the next line after `}` allow for comments covering the entire following block to be consistently located above the block:
+`else` and `catch` on the next line after `}` allow for consistent placement of comments covering the condition and the entire following block:
 
 ```ts
 // this is a comment to the condition
