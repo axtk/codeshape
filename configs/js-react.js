@@ -5,6 +5,8 @@ const react = {
     hooks: require('../rules/react-hooks'),
 };
 
+const mdRules = require('../rules/md');
+
 module.exports = {
     ...jsConfig,
     overrides: [
@@ -34,6 +36,10 @@ module.exports = {
                 ...react.general,
                 ...react.hooks,
             },
+        },
+        {
+            files: ['**/*.md/*.jsx'],
+            rules: mdRules,
         },
     ],
 };

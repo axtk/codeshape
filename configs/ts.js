@@ -42,11 +42,7 @@ module.exports = {
             },
         },
         {
-            files: ['**/*.md/*.ts?(x)'],
-            parser: '@typescript-eslint/parser',
-            parserOptions: {
-                project: ['./tsconfig.codeshape.json'],
-            },
+            files: ['**/*.md/*.[jt]s'],
             rules: mdRules,
         },
     ],

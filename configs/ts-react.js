@@ -5,6 +5,8 @@ const react = {
     hooks: require('../rules/react-hooks'),
 };
 
+const mdRules = require('../rules/md');
+
 module.exports = {
     ...tsConfig,
     overrides: [
@@ -62,6 +64,10 @@ module.exports = {
                 ...react.general,
                 ...react.hooks,
             },
+        },
+        {
+            files: ['**/*.md/*.[jt]sx'],
+            rules: mdRules,
         },
     ],
 };
