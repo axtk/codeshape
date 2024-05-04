@@ -5,8 +5,7 @@
 ## Usage
 
 - Install `codeshape` globally: `npm i -g codeshape`;
-- Run `codeshape` in a project directory;
-- See more options: `codeshape --help`.
+- Run `codeshape` in a project directory.
 
 ## Features
 
