@@ -26,7 +26,7 @@ import {x} from './x';
 `else` and `catch` on the next line after `}` allow for comments covering the entire following block to be consistently located above the block:
 
 ```ts
-// this is a sample comment to the condition
+// this is a comment to the condition
 if (condition) {
     // ...
 }
