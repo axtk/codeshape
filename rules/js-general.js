@@ -18,6 +18,7 @@ module.exports = {
     'no-console': 'error',
     'no-else-return': ['error', {allowElseIf: false}],
     'no-empty': ['error', {allowEmptyCatch: true}],
+    'no-empty-function': 'off',
     'no-eval': 'error',
     'no-extend-native': 'error',
     'no-implicit-coercion': ['error', {disallowTemplateShorthand: true}],
