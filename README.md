@@ -1,12 +1,12 @@
 # codeshape
 
-Code-style rules for *eslint*, *typescript-eslint*, and *stylelint*
+*A linting utility with a built-in set of code-style rules for JS, TS, and CSS*
 
 ## Usage
 
-For quick linting, run `npx codeshape` in a project directory.
-
-To see more options, run `npx codeshape --help`.
+- Install `codeshape` globally: `npm i -g codeshape`;
+- Run `codeshape` in a project directory;
+- See more options: `codeshape --help`.
 
 ## Features
 
