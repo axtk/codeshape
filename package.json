@@ -1,7 +1,7 @@
 {
   "name": "codeshape",
   "version": "0.3.1",
-  "description": "Code-style rules for eslint, typescript-eslint, and stylelint",
+  "description": "A linting utility with a built-in set of code-style rules for JS, TS, and CSS",
   "bin": {
     "codeshape": "utils/run.js"
   },
