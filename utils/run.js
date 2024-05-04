@@ -181,10 +181,10 @@ function removeTempTsConfig(config) {
 }
 
 function getBin(name) {
-    // let ownBin = join(__dirname, `../node_modules/.bin/${name}`);
+    let ownBin = join(__dirname, `../node_modules/.bin/${name}`);
 
-    // if (existsSync(ownBin))
-    //     return ownBin;
+    if (existsSync(ownBin))
+        return ownBin;
 
     let packageConfig = require(join(__dirname, '../package.json'));
     let version = packageConfig.dependencies[name];
