@@ -41,7 +41,7 @@ module.exports = {
             },
         },
         {
-            files: ['**/*.md/*.js?(x)'],
+            files: ['**/*.md/*.js'],
             rules: mdRules,
         },
     ],

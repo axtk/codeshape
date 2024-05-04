@@ -10,7 +10,33 @@ module.exports = {
     overrides: [
         ...tsConfig.overrides,
         {
-            files: ['**/*.tsx'],
+            files: ['**/*.jsx', '**/*.md/*.jsx'],
+            parserOptions: {
+                ecmaFeatures: {
+                    jsx: true,
+                },
+            },
+            extends: [
+                'plugin:react/recommended',
+                'plugin:jsx-a11y/recommended',
+            ],
+            plugins: [
+                'react',
+                'react-hooks',
+                'jsx-a11y',
+            ],
+            settings: {
+                react: {
+                    version: 'detect',
+                },
+            },
+            rules: {
+                ...react.general,
+                ...react.hooks,
+            },
+        },
+        {
+            files: ['**/*.tsx', '**/*.md/*.tsx'],
             parser: '@typescript-eslint/parser',
             parserOptions: {
                 ecmaFeatures: {
