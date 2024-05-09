@@ -129,11 +129,24 @@ function createTempTsConfig(dirs, config) {
         }
 
         let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
-        let ext = '{js,jsx,ts,tsx,md}';
+
+        let codeExt = '{js,jsx,ts,tsx}';
+        let mdExt = 'md/*.[jt]s?(x)';
+
+        let codeIncludes = dirs.length
+            ? dirs.map(dir => `${dir}/**/*.${codeExt}`)
+            : [`*.${codeExt}`];
+
+        let mdIncludes = dirs.length
+            ? dirs.map(dir => `${dir}/**/*.${mdExt}`)
+            : [`*.${mdExt}`];
 
         let tempTsConfig = {
             extends: './tsconfig.json',
-            includes: dirs.length ? dirs.map(dir => `${dir}/**/*.${ext}`) : [`*.${ext}`],
+            includes: [
+                ...codeIncludes,
+                ...mdIncludes,
+            ],
             exludes: tsConfig.excludes ?? [],
         };
 
