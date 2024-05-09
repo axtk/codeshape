@@ -59,7 +59,7 @@ module.exports = {
     '@typescript-eslint/no-redundant-type-constituents': 'error',
     '@typescript-eslint/no-unnecessary-boolean-literal-compare': [
         'error',
-        {allowComparingNullableBooleansToFalse: false},
+        {allowComparingNullableBooleansToTrue: false},
     ],
     // reports `x ?? ''` as an error
     '@typescript-eslint/no-unnecessary-condition': 'off',
