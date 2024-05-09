@@ -19,7 +19,7 @@ module.exports = {
     'jsx-quotes': 'error',
     'key-spacing': 'error',
     'keyword-spacing': 'error',
-    'lines-between-class-members': ['error', 'never'],
+    'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
     'max-len': ['error', {code: 100, ignoreUrls: true, ignoreRegExpLiterals: true}],
     'no-extra-parens': ['error', 'all', {
         nestedBinaryExpressions: false,

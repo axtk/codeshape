@@ -13,7 +13,9 @@ module.exports = {
     'keyword-spacing': 'off',
     '@typescript-eslint/keyword-spacing': 'error',
     'lines-between-class-members': 'off',
-    '@typescript-eslint/lines-between-class-members': ['error', 'never'],
+    '@typescript-eslint/lines-between-class-members': ['error', 'always', {
+        exceptAfterSingleLine: true,
+    }],
     'no-extra-parens': 'off',
     '@typescript-eslint/no-extra-parens': ['error', 'all', {
         nestedBinaryExpressions: false,
