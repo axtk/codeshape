@@ -21,7 +21,7 @@ module.exports = {
         },
         {
             selector: 'property',
-            format: ['UPPER_CASE'],
+            format: ['camelCase', 'UPPER_CASE'],
             leadingUnderscore: 'allow',
             types: ['string', 'number', 'boolean'],
         },
@@ -33,7 +33,13 @@ module.exports = {
         {
             selector: 'variable',
             modifiers: ['const'],
-            format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+            format: ['camelCase', 'PascalCase'],
+        },
+        {
+            selector: 'variable',
+            modifiers: ['const'],
+            format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+            types: ['string', 'number', 'boolean'],
         },
         {
             selector: 'typeLike',
