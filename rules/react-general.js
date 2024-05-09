@@ -4,7 +4,7 @@ module.exports = {
     'react/jsx-closing-bracket-location': 'error',
     'react/jsx-closing-tag-location': 'error',
     'react/jsx-equals-spacing': 'error',
-    'react/jsx-first-prop-new-line': 'error',
+    'react/jsx-first-prop-new-line': ['error', 'multiline'],
     'react/jsx-fragments': 'error',
     'react/jsx-indent': ['error', 4, {indentLogicalExpressions: true}],
     'react/jsx-indent-props': 'error',
