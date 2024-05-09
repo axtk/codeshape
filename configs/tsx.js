@@ -1,5 +1,9 @@
 const tsConfig = require('./ts');
 
+const ts = {
+    tests: require('../rules/ts-tests'),
+};
+
 const react = {
     general: require('../rules/react-general'),
     hooks: require('../rules/react-hooks'),
@@ -65,6 +69,17 @@ module.exports = {
                 ...react.general,
                 ...react.hooks,
             },
+        },
+        {
+            files: [
+                '**/?(_)_tests/**/*.tsx',
+                '**/*.test?(s).tsx',
+                '**/test?(s).tsx',
+            ],
+            env: {
+                jest: true,
+            },
+            rules: ts.tests,
         },
         {
             files: ['**/*.md/*.[jt]sx'],

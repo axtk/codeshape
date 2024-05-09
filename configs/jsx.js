@@ -1,5 +1,9 @@
 const jsConfig = require('./js');
 
+const js = {
+    tests: require('../rules/js-tests'),
+};
+
 const react = {
     general: require('../rules/react-general'),
     hooks: require('../rules/react-hooks'),
@@ -37,6 +41,17 @@ module.exports = {
                 ...react.general,
                 ...react.hooks,
             },
+        },
+        {
+            files: [
+                '**/?(_)_tests/**/*.jsx',
+                '**/*.test?(s).jsx',
+                '**/test?(s).jsx',
+            ],
+            env: {
+                jest: true,
+            },
+            rules: js.tests,
         },
         {
             files: ['**/*.md/*.jsx'],

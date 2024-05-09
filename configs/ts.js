@@ -5,6 +5,7 @@ const ts = {
     general: require('../rules/ts-general'),
     formatting: require('../rules/ts-formatting'),
     imports: require('../rules/ts-imports'),
+    tests: require('../rules/ts-tests'),
 };
 
 const mdRules = require('../rules/md');
@@ -40,6 +41,17 @@ module.exports = {
                 ...ts.formatting,
                 ...ts.imports,
             },
+        },
+        {
+            files: [
+                '**/?(_)_tests/**/*.ts',
+                '**/*.test?(s).ts',
+                '**/test?(s).ts',
+            ],
+            env: {
+                jest: true,
+            },
+            rules: ts.tests,
         },
         {
             files: ['**/*.md/*.[jt]s'],

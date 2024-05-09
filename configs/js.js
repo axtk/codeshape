@@ -2,6 +2,7 @@ const js = {
     general: require('../rules/js-general'),
     formatting: require('../rules/js-formatting'),
     imports: require('../rules/js-imports'),
+    tests: require('../rules/js-tests'),
 };
 
 const mdRules = require('../rules/md');
@@ -33,12 +34,14 @@ module.exports = {
     overrides: [
         {
             files: [
-                '**/_tests/**/*.[jt]s?(x)',
-                '**/?(*.)test.[jt]s?(x)',
+                '**/?(_)_tests/**/*.js',
+                '**/*.test?(s).js',
+                '**/test?(s).js',
             ],
             env: {
                 jest: true,
             },
+            rules: js.tests,
         },
         {
             files: ['**/*.md/*.js'],
