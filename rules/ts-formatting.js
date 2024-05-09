@@ -8,6 +8,12 @@ module.exports = {
     'func-call-spacing': 'off',
     '@typescript-eslint/func-call-spacing': 'error',
     'indent': 'off',
+    '@typescript-eslint/indent': ['error', 4, {
+        ignoredNodes: [
+            'TSUnionType',
+            'TSTypeParameterInstantiation',
+        ],
+    }],
     'key-spacing': 'off',
     '@typescript-eslint/key-spacing': 'error',
     'keyword-spacing': 'off',
