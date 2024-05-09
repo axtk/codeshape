@@ -43,7 +43,7 @@ module.exports = {
             },
         },
         {
-            files: ['**/*.tsx', '**/*.md/*.tsx'],
+            files: ['**/*.tsx'],
             parser: '@typescript-eslint/parser',
             parserOptions: {
                 ecmaFeatures: {
@@ -71,12 +71,6 @@ module.exports = {
             },
         },
         {
-            files: ['**/*.md/*.tsx'],
-            parserOptions: {
-                project: false,
-            },
-        },
-        {
             files: [
                 '**/?(_)_tests/**/*.tsx',
                 '**/*.test?(s).tsx',
@@ -88,7 +82,7 @@ module.exports = {
             rules: ts.tests,
         },
         {
-            files: ['**/*.md/*.[jt]sx'],
+            files: ['**/*.md/*.jsx'],
             rules: {
                 ...mdRules,
                 ...mdxRules,

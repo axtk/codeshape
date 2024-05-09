@@ -131,7 +131,7 @@ function createTempTsConfig(dirs, config) {
         let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
 
         let codeExt = '{js,jsx,ts,tsx}';
-        let mdExt = `md/*.${codeExt}`;
+        let mdExt = 'md/*.{js,jsx}';
 
         let codeIncludes = dirs.length
             ? dirs.map(dir => `${dir}/**/*.${codeExt}`)

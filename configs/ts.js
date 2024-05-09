@@ -8,14 +8,12 @@ const ts = {
     tests: require('../rules/ts-tests'),
 };
 
-const mdRules = require('../rules/md');
-
 module.exports = {
     ...jsConfig,
     overrides: [
         ...jsConfig.overrides,
         {
-            files: ['**/*.ts?(x)', '**/*.md/*.ts?(x)'],
+            files: ['**/*.ts?(x)'],
             extends: [
                 ...jsConfig.extends,
                 'plugin:@typescript-eslint/recommended',
@@ -43,12 +41,6 @@ module.exports = {
             },
         },
         {
-            files: ['**/*.md/*.ts?(x)'],
-            parserOptions: {
-                project: false,
-            },
-        },
-        {
             files: [
                 '**/?(_)_tests/**/*.ts',
                 '**/*.test?(s).ts',
@@ -58,10 +50,6 @@ module.exports = {
                 jest: true,
             },
             rules: ts.tests,
-        },
-        {
-            files: ['**/*.md/*.[jt]s'],
-            rules: mdRules,
         },
     ],
 };
