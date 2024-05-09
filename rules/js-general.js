@@ -11,6 +11,7 @@ module.exports = {
     'dot-notation': 'error',
     'eqeqeq': 'error',
     'grouped-accessor-pairs': ['error', 'getBeforeSet'],
+    'indent': ['error', 4],
     'max-classes-per-file': 'error',
     'max-lines': ['error', {max: 350}],
     'max-params': 'error',
