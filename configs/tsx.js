@@ -71,6 +71,12 @@ module.exports = {
             },
         },
         {
+            files: ['**/*.md/*.tsx'],
+            parserOptions: {
+                project: false,
+            },
+        },
+        {
             files: [
                 '**/?(_)_tests/**/*.tsx',
                 '**/*.test?(s).tsx',

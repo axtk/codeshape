@@ -43,6 +43,12 @@ module.exports = {
             },
         },
         {
+            files: ['**/*.md/*.ts?(x)'],
+            parserOptions: {
+                project: false,
+            },
+        },
+        {
             files: [
                 '**/?(_)_tests/**/*.ts',
                 '**/*.test?(s).ts',
