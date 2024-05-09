@@ -21,6 +21,12 @@ module.exports = {
         },
         {
             selector: 'property',
+            format: ['UPPER_CASE'],
+            leadingUnderscore: 'allow',
+            types: ['string', 'number', 'boolean'],
+        },
+        {
+            selector: 'property',
             format: null,
             filter: '^__html$',
         },
