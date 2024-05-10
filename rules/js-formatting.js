@@ -15,7 +15,10 @@ module.exports = {
     'function-call-argument-newline': ['error', 'consistent'],
     'function-paren-newline': ['error', 'multiline-arguments'],
     'generator-star-spacing': ['error', 'after'],
-    'indent': 'error',
+    'indent': ['error', 4, {
+        SwitchCase: 1,
+        outerIIFEBody: 'off',
+    }],
     'jsx-quotes': 'error',
     'key-spacing': 'error',
     'keyword-spacing': 'error',

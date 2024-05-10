@@ -9,6 +9,8 @@ module.exports = {
     '@typescript-eslint/func-call-spacing': 'error',
     'indent': 'off',
     '@typescript-eslint/indent': ['error', 4, {
+        SwitchCase: 1,
+        outerIIFEBody: 'off',
         ignoredNodes: [
             'TSUnionType',
             'TSTypeParameterInstantiation',
