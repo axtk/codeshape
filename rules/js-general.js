@@ -25,7 +25,14 @@ module.exports = {
     'no-implicit-coercion': ['error', {disallowTemplateShorthand: true}],
     'no-implied-eval': 'error',
     'no-lonely-if': 'error',
-    'no-mixed-operators': 'error',
+    'no-mixed-operators': ['error', {
+        groups: [
+            ['&', '|', '^', '~', '<<', '>>', '>>>'],
+            ['==', '!=', '===', '!==', '>', '>=', '<', '<='],
+            ['&&', '||'],
+            ['in', 'instanceof'],
+        ],
+    }],
     'no-negated-condition': 'error',
     'no-new-func': 'error',
     'no-new-object': 'error',
