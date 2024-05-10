@@ -148,6 +148,12 @@ function createTempTsConfig(dirs, config) {
             ? dirs.map(dir => `${dir}/**/*.${mdExt}`)
             : [`*.${mdExt}`];
 
+        let defaultTSExcludes = [
+            ...defaultJSExcludes,
+            '**/*.md/*.ts',
+            '**/*.md/*.tsx',
+        ];
+
         let tempTsConfig = {
             extends: './tsconfig.json',
             includes: [
@@ -156,7 +162,7 @@ function createTempTsConfig(dirs, config) {
             ],
             exludes: [
                 ...tsConfig.excludes ?? [],
-                ...config.noDefaultExcludes ? [] : defaultJSExcludes,
+                ...config.noDefaultExcludes ? [] : defaultTSExcludes,
             ],
         };
 
