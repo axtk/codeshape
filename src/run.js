@@ -11,6 +11,9 @@ let cwd = process.cwd();
 
 let tempTsConfigFileName = 'tsconfig.codeshape.json';
 
+let defaultJSExcludes = ['dist/**/*.js', 'assets/**/*.js', 'res/**/*.js'];
+let defaultCSSExcludes = ['dist/**/*.css', 'assets/**/*.css', 'res/**/*.css'];
+
 function getList(dir) {
     let dirPath = join(__dirname, '..', dir);
 
@@ -40,6 +43,7 @@ function showGuide() {
     console.log('  --config <path> | -c <path>');
     console.log('  --ignore-config (ignore config file)');
     console.log('  --explicit-exit-code | -x (fail with exit code 1)');
+    console.log('  --no-default-excludes (such as \'dist\', \'assets\', \'res\')');
     console.log('  --sequential (rather than in parallel, which is default)');
     showConfigKeys();
 }
@@ -82,6 +86,9 @@ function getConfig() {
 
     if (args.includes('--explicit-exit-code') || args.includes('-x'))
         argConfig.explicitExitCode = true;
+
+    if (args.includes('--no-default-excludes'))
+        argConfig.noDefaultExcludes = true;
 
     let fileConfig = {};
 
@@ -147,7 +154,10 @@ function createTempTsConfig(dirs, config) {
                 ...codeIncludes,
                 ...mdIncludes,
             ],
-            exludes: tsConfig.excludes ?? [],
+            exludes: [
+                ...tsConfig.excludes ?? [],
+                ...config.noDefaultExcludes ? [] : defaultJSExcludes,
+            ],
         };
 
         if (config.debug) {
@@ -213,8 +223,15 @@ async function execConfigEntry(key, dirs, config) {
         let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
         let target = `"${root}/**/*.${key === 'scss' ? '(css|scss)' : 'css'}"`;
 
-        cmd = `${getBin('stylelint')} --config ${configPath} ${target}` +
-            (config.fix ? ' --fix' : '');
+        cmd = `${getBin('stylelint')} --config ${configPath} ${target}`;
+
+        if (!config.noDefaultExcludes) {
+            for (let exclude of defaultCSSExcludes)
+                cmd += ` --ignore-pattern "${exclude}"`;
+        }
+
+        if (config.fix)
+            cmd += ' --fix';
     }
     else {
         tsMode = key !== 'js';
@@ -223,8 +240,15 @@ async function execConfigEntry(key, dirs, config) {
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
         let target = `${dirs.join(' ') || '.'} --ext ${ext}`;
 
-        cmd = `${env}${getBin('eslint')} -c ${configPath} ${target} --no-eslintrc` +
-            (config.fix ? ' --fix' : '');
+        cmd = `${env}${getBin('eslint')} -c ${configPath} ${target} --no-eslintrc`;
+
+        if (!config.noDefaultExcludes) {
+            for (let exclude of defaultJSExcludes)
+                cmd += ` --ignore-pattern "${exclude}"`;
+        }
+
+        if (config.fix)
+            cmd += ' --fix';
     }
 
     if (config.debug) {
