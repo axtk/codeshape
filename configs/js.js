@@ -3,6 +3,7 @@ const js = {
     formatting: require('../rules/js-formatting'),
     imports: require('../rules/js-imports'),
     tests: require('../rules/js-tests'),
+    cli: require('../rules/js-cli'),
 };
 
 const mdRules = require('../rules/md');
@@ -42,6 +43,12 @@ module.exports = {
                 jest: true,
             },
             rules: js.tests,
+        },
+        {
+            files: [
+                '**/cli/**/*.js',
+            ],
+            rules: js.cli,
         },
         {
             files: ['**/*.md/*.js'],

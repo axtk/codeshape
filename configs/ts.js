@@ -6,6 +6,7 @@ const ts = {
     formatting: require('../rules/ts-formatting'),
     imports: require('../rules/ts-imports'),
     tests: require('../rules/ts-tests'),
+    cli: require('../rules/ts-cli'),
 };
 
 module.exports = {
@@ -50,6 +51,12 @@ module.exports = {
                 jest: true,
             },
             rules: ts.tests,
+        },
+        {
+            files: [
+                '**/cli/**/*.ts',
+            ],
+            rules: ts.cli,
         },
     ],
 };
