@@ -8,6 +8,7 @@ module.exports = {
         {
             selector: 'default',
             format: ['camelCase'],
+            leadingUnderscore: 'allow',
         },
         {
             selector: 'parameter',
@@ -34,11 +35,13 @@ module.exports = {
             selector: 'variable',
             modifiers: ['const'],
             format: ['camelCase', 'PascalCase'],
+            leadingUnderscore: 'allow',
         },
         {
             selector: 'variable',
             modifiers: ['const'],
             format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+            leadingUnderscore: 'allow',
             types: ['string', 'number', 'boolean'],
         },
         {
