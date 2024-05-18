@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+/* eslint-disable no-console, max-lines */
 
 const {existsSync, readdirSync, unlinkSync, writeFileSync} = require('fs');
 const {join} = require('path');
@@ -11,8 +11,19 @@ let cwd = process.cwd();
 
 let tempTsConfigFileName = 'tsconfig.codeshape.json';
 
-let defaultJSExcludes = ['dist/**/*.js', 'assets/**/*.js', 'res/**/*.js'];
-let defaultCSSExcludes = ['dist/**/*.css', 'assets/**/*.css', 'res/**/*.css'];
+let defaultJSExcludes = [
+    'dist/**/*.js',
+    'assets/**/*.js',
+    'res/**/*.js',
+    '**/*.md/*.ts',
+    '**/*.md/*.tsx',
+];
+
+let defaultCSSExcludes = [
+    'dist/**/*.css',
+    'assets/**/*.css',
+    'res/**/*.css',
+];
 
 function getList(dir) {
     let dirPath = join(__dirname, '..', dir);
@@ -148,12 +159,6 @@ function createTempTsConfig(dirs, config) {
             ? dirs.map(dir => `${dir}/**/*.${mdExt}`)
             : [`*.${mdExt}`];
 
-        let defaultTSExcludes = [
-            ...defaultJSExcludes,
-            '**/*.md/*.ts',
-            '**/*.md/*.tsx',
-        ];
-
         let tempTsConfig = {
             extends: './tsconfig.json',
             includes: [
@@ -162,7 +167,7 @@ function createTempTsConfig(dirs, config) {
             ],
             exludes: [
                 ...tsConfig.excludes ?? [],
-                ...config.noDefaultExcludes ? [] : defaultTSExcludes,
+                ...config.noDefaultExcludes ? [] : defaultJSExcludes,
             ],
         };
 
