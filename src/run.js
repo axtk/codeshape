@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 /* eslint-disable no-console, max-lines */
+const {access, readdir, rm, writeFile} = require('node:fs/promises');
+const {join} = require('node:path');
+const {exec} = require('node:child_process');
+const {promisify} = require('node:util');
 
-const {existsSync, readdirSync, unlinkSync, writeFileSync} = require('fs');
-const {join} = require('path');
-const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
+const execAsync = promisify(exec);
 
+let ownDir = __dirname;
+let targetDir = process.cwd();
 let args = process.argv.slice(2);
-let cwd = process.cwd();
 
 let tempTsConfigFileName = 'tsconfig.codeshape.json';
 
@@ -25,24 +27,31 @@ let defaultCSSExcludes = [
     'res/**/*.css',
 ];
 
-function getList(dir) {
-    let dirPath = join(__dirname, '..', dir);
+async function getNameList(dir) {
+    try {
+        let dirPath = join(ownDir, '..', dir);
 
-    if (!existsSync(dirPath))
+        return (await readdir(dirPath)).reduce((list, name) => {
+            if (name.endsWith('.js'))
+                list.push(name.slice(0, -3));
+
+            return list;
+        }, []);
+    }
+    catch {
         return [];
-
-    return readdirSync(dirPath).reduce((list, name) => {
-        if (name.endsWith('.js'))
-            list.push(name.slice(0, -3));
-
-        return list;
-    }, []);
+    }
 }
 
-const presetKeys = getList('presets');
-const configKeys = getList('configs');
+let presetKeys = [];
+let configKeys = [];
 
-const stylelintConfigKeys = ['css'];
+let stylelintConfigKeys = ['css'];
+
+async function setup() {
+    presetKeys = await getNameList('presets');
+    configKeys = await getNameList('configs');
+}
 
 function showGuide() {
     console.log();
@@ -79,17 +88,17 @@ function getConfig() {
             if (configKey)
                 argConfig[configKey] ??= [];
             else if (key === 'config' && args[i + 1])
-                configPath = join(cwd, args[i + 1]);
+                configPath = join(targetDir, args[i + 1]);
             else if (['fix', 'debug', 'sequential'].includes(key))
                 argConfig[key] = true;
             else if (presetKeys.includes(key))
-                configPath = join(__dirname, `../presets/${key}.js`);
+                configPath = join(ownDir, `../presets/${key}.js`);
         }
         else if (arg.startsWith('-') && arg.length === 2) {
             let key = arg.slice(1);
 
             if (key === 'c' && args[i + 1])
-                configPath = join(cwd, args[i + 1]);
+                configPath = join(targetDir, args[i + 1]);
         }
         else if (configKey)
             argConfig[configKey].push(arg);
@@ -107,14 +116,14 @@ function getConfig() {
         if (configPath)
             fileConfig = require(configPath);
         else if (!args.includes('--ignore-config'))
-            fileConfig = require(join(cwd, './.lintrc'));
+            fileConfig = require(join(targetDir, './.lintrc'));
     }
     catch {}
 
     return {...fileConfig, ...argConfig};
 }
 
-function createDebugEslintConfig(key, configPath) {
+async function createDebugEslintConfig(key, configPath) {
     try {
         console.log();
         console.log('Eslint config:');
@@ -122,9 +131,9 @@ function createDebugEslintConfig(key, configPath) {
 
         if (configPath) {
             let eslintConfig = require(configPath);
-            let path = join(cwd, `debug_eslint_config.${key}.json`);
+            let path = join(targetDir, `debug_eslint_config.${key}.json`);
 
-            writeFileSync(path, JSON.stringify(eslintConfig, null, 4));
+            await writeFile(path, JSON.stringify(eslintConfig, null, 4));
 
             console.log(`>> ${path}`);
         }
@@ -135,7 +144,7 @@ function createDebugEslintConfig(key, configPath) {
     }
 }
 
-function createTempTsConfig(dirs, config) {
+async function createTempTsConfig(dirs, config) {
     try {
         let tsConfig;
 
@@ -146,7 +155,7 @@ function createTempTsConfig(dirs, config) {
             tsConfig = {};
         }
 
-        let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
+        let tempTsConfigFilePath = join(targetDir, tempTsConfigFileName);
 
         let codeExt = '{js,jsx,ts,tsx}';
         let mdExt = 'md/*.{js,jsx}';
@@ -177,7 +186,7 @@ function createTempTsConfig(dirs, config) {
             console.log(JSON.stringify(tempTsConfig, null, 2));
         }
 
-        writeFileSync(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 4));
+        await writeFile(tempTsConfigFilePath, JSON.stringify(tempTsConfig, null, 4));
 
         if (config.debug)
             console.log(`>> ${tempTsConfigFilePath}`);
@@ -191,12 +200,12 @@ function createTempTsConfig(dirs, config) {
     }
 }
 
-function removeTempTsConfig(config) {
+async function removeTempTsConfig(config) {
     try {
-        let tempTsConfigFilePath = join(cwd, tempTsConfigFileName);
+        let tempTsConfigFilePath = join(targetDir, tempTsConfigFileName);
 
-        if (existsSync(tempTsConfigFilePath)) {
-            unlinkSync(tempTsConfigFilePath);
+        try {
+            await rm(tempTsConfigFilePath);
 
             if (config.debug) {
                 console.log();
@@ -204,6 +213,7 @@ function removeTempTsConfig(config) {
                 console.log(`<< ${tempTsConfigFilePath}`);
             }
         }
+        catch {}
     }
     catch (error) {
         if (config.debug) {
@@ -214,27 +224,31 @@ function removeTempTsConfig(config) {
     }
 }
 
-function getBin(name) {
-    let ownBin = join(__dirname, `../node_modules/.bin/${name}`);
+async function getBin(name) {
+    let ownBin = join(ownDir, `../node_modules/.bin/${name}`);
 
-    if (existsSync(ownBin))
+    try {
+        await access(ownBin);
+
         return ownBin;
+    }
+    catch {
+        let packageConfig = require(join(ownDir, '../package.json'));
+        let version = packageConfig.dependencies[name];
 
-    let packageConfig = require(join(__dirname, '../package.json'));
-    let version = packageConfig.dependencies[name];
-
-    return `npx ${name}@${version}`;
+        return `npx ${name}@${version}`;
+    }
 }
 
 async function execConfigEntry(key, dirs, config) {
-    let configPath = join(__dirname, `../configs/${key}.js`);
+    let configPath = join(ownDir, `../configs/${key}.js`);
     let cmd, tsMode = false;
 
     if (stylelintConfigKeys.includes(key)) {
         let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
         let target = `"${root}/**/*.${key === 'scss' ? '(css|scss)' : 'css'}"`;
 
-        cmd = `${getBin('stylelint')} --config ${configPath} ${target}`;
+        cmd = `${await getBin('stylelint')} --config ${configPath} ${target}`;
 
         if (!config.noDefaultExcludes) {
             for (let exclude of defaultCSSExcludes)
@@ -247,11 +261,11 @@ async function execConfigEntry(key, dirs, config) {
     else {
         tsMode = key !== 'js';
 
-        let env = `${getBin('cross-env')} ESLINT_USE_FLAT_CONFIG=false `;
+        let env = `${await getBin('cross-env')} ESLINT_USE_FLAT_CONFIG=false `;
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
         let target = `${dirs.join(' ') || '.'} --ext ${ext}`;
 
-        cmd = `${env}${getBin('eslint')} -c ${configPath} ${target} --no-eslintrc`;
+        cmd = `${env}${await getBin('eslint')} -c ${configPath} ${target} --no-eslintrc`;
 
         if (!config.noDefaultExcludes) {
             for (let exclude of defaultJSExcludes)
@@ -263,7 +277,7 @@ async function execConfigEntry(key, dirs, config) {
     }
 
     if (config.debug) {
-        createDebugEslintConfig(key, configPath);
+        await createDebugEslintConfig(key, configPath);
 
         console.log();
         console.log('Command:');
@@ -271,10 +285,10 @@ async function execConfigEntry(key, dirs, config) {
     }
 
     if (tsMode) {
-        createTempTsConfig(dirs, config);
-        await exec(cmd);
+        await createTempTsConfig(dirs, config);
+        await execAsync(cmd);
     }
-    else await exec(cmd);
+    else await execAsync(cmd);
 }
 
 function stop(ok, config) {
@@ -282,7 +296,9 @@ function stop(ok, config) {
         process.exit(1);
 }
 
-(async () => {
+async function run() {
+    await setup();
+
     let config = getConfig();
 
     if (config.debug) {
@@ -291,8 +307,12 @@ function stop(ok, config) {
         console.log(JSON.stringify(config, null, 2));
 
         console.log();
-        console.log('Working directory:');
-        console.log(cwd);
+        console.log('Own directory:');
+        console.log(ownDir);
+
+        console.log();
+        console.log('Target directory:');
+        console.log(targetDir);
     }
 
     if (args.includes('--help')) {
@@ -301,7 +321,8 @@ function stop(ok, config) {
         return stop(true, config);
     }
 
-    let selectedConfigKeys = Object.keys(config).filter(key => configKeys.includes(key));
+    let selectedConfigKeys = Object.keys(config)
+        .filter(key => configKeys.includes(key));
 
     if (selectedConfigKeys.length === 0) {
         console.error(
@@ -349,6 +370,10 @@ function stop(ok, config) {
         stop(false, config);
     }
     finally {
-        removeTempTsConfig(config);
+        await removeTempTsConfig(config);
     }
+}
+
+(async () => {
+    await run();
 })();
