@@ -57,7 +57,7 @@ async function setup() {
 function showGuide() {
     console.log();
     console.log('Optional parameters:');
-    console.log('  <target directory path> (should be the first parameter, if provided)');
+    // console.log('  <target directory path> (should be the first parameter, if provided)');
     console.log('  --<config_key> <dir1> <dir2> ...');
     console.log('  --<preset_key> (experimental, currently unused)');
     console.log('  --fix');
@@ -167,7 +167,8 @@ async function createTempEslintConfig(key, configPath, config) {
 
             await writeFile(path, JSON.stringify(eslintConfig, null, 4));
 
-            console.log(`>> ${path}`);
+            if (config.debug)
+                console.log(`>> ${path}`);
         }
     }
     catch (error) {
@@ -382,12 +383,12 @@ async function run() {
 
         if (config.sequential || config.parallel === false) {
             for (let key of selectedConfigKeys) {
-                console.log(`lint ${key}`);
+                console.log(`Linting "${key}"`);
                 await execConfigEntry(key, config[key], config);
             }
         }
         else {
-            console.log(`lint ${selectedConfigKeys.join(', ')}`);
+            console.log(`Linting ${selectedConfigKeys.map(s => `"${s}"`).join(', ')}`);
             await Promise.all(
                 selectedConfigKeys.map(key => execConfigEntry(key, config[key], config)),
             );
