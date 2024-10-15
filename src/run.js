@@ -248,7 +248,10 @@ async function execConfigEntry(key, dirs, config) {
     let cmd, tsMode = false;
 
     if (stylelintConfigKeys.includes(key)) {
-        let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || targetDir;
+        let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join();
+
+        root = root ? `${targetDir}/${root}` : targetDir;
+
         let target = `"${root}/**/*.${key === 'scss' ? '(css|scss)' : 'css'}"`;
 
         cmd = `${await getBin('stylelint')} --config ${configPath} ${target}`;
@@ -266,7 +269,7 @@ async function execConfigEntry(key, dirs, config) {
 
         let env = `${await getBin('cross-env')} ESLINT_USE_FLAT_CONFIG=false `;
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
-        let target = `${dirs.join(' ') || targetDir} --ext ${ext}`;
+        let target = `${dirs.map(dir => `${targetDir}/${dir}`).join(' ') || targetDir} --ext ${ext}`;
 
         cmd = `${env}${await getBin('eslint')} -c ${configPath} ${target} --no-eslintrc`;
 
