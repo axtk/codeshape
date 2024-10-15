@@ -157,11 +157,12 @@ async function createTempEslintConfig(key, configPath, config) {
 
             path = join(targetDir, `eslint.${key}.config.json`);
             tempFiles.push(path);
+
             updateParserOptions(eslintConfig?.parserOptions);
 
             if (eslintConfig.overrides) {
-                for (let eslintConfigOverride of eslintConfig.overrides)
-                    updateParserOptions(eslintConfigOverride?.parserOptions);
+                for (let overrideConfig of eslintConfig.overrides)
+                    updateParserOptions(overrideConfig?.parserOptions);
             }
 
             await writeFile(path, JSON.stringify(eslintConfig, null, 4));
