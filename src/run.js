@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console, max-lines */
 const {access, readdir, rm, writeFile} = require('node:fs/promises');
-const {join} = require('node:path');
+const {join, resolve} = require('node:path');
 const {exec} = require('node:child_process');
 const {promisify} = require('node:util');
 
@@ -103,7 +103,7 @@ function getConfig() {
                 configPath = join(targetDir, args[i + 1]);
         }
         else if (i === 0)
-            targetDir = require.resolve(arg);
+            targetDir = resolve(arg);
         else if (configKey)
             argConfig[configKey].push(arg);
     }
