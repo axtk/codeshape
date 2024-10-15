@@ -7,7 +7,7 @@ const {promisify} = require('node:util');
 
 const execAsync = promisify(exec);
 
-let ownDir = __dirname;
+let ownRootDir = join(__dirname, '../');
 let targetDir = process.cwd();
 let args = process.argv.slice(2);
 
@@ -29,7 +29,7 @@ let defaultCSSExcludes = [
 
 async function getNameList(dir) {
     try {
-        let dirPath = join(ownDir, '..', dir);
+        let dirPath = join(ownRootDir, dir);
 
         return (await readdir(dirPath)).reduce((list, name) => {
             if (name.endsWith('.js'))
@@ -93,7 +93,7 @@ function getConfig() {
             else if (['fix', 'debug', 'sequential'].includes(key))
                 argConfig[key] = true;
             else if (presetKeys.includes(key))
-                configPath = join(ownDir, `../presets/${key}.js`);
+                configPath = join(ownRootDir, 'presets', `${key}.js`);
         }
         else if (arg.startsWith('-') && arg.length === 2) {
             let key = arg.slice(1);
@@ -228,7 +228,7 @@ async function removeTempTsConfig(config) {
 }
 
 async function getBin(name) {
-    let ownBin = join(ownDir, `../node_modules/.bin/${name}`);
+    let ownBin = join(ownRootDir, `node_modules/.bin/${name}`);
 
     try {
         await access(ownBin);
@@ -236,7 +236,7 @@ async function getBin(name) {
         return ownBin;
     }
     catch {
-        let packageConfig = require(join(ownDir, '../package.json'));
+        let packageConfig = require(join(ownRootDir, 'package.json'));
         let version = packageConfig.dependencies[name];
 
         return `npx ${name}@${version}`;
@@ -244,11 +244,11 @@ async function getBin(name) {
 }
 
 async function execConfigEntry(key, dirs, config) {
-    let configPath = join(ownDir, `../configs/${key}.js`);
+    let configPath = join(ownRootDir, 'configs', `${key}.js`);
     let cmd, tsMode = false;
 
     if (stylelintConfigKeys.includes(key)) {
-        let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || '.';
+        let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join() || targetDir;
         let target = `"${root}/**/*.${key === 'scss' ? '(css|scss)' : 'css'}"`;
 
         cmd = `${await getBin('stylelint')} --config ${configPath} ${target}`;
@@ -266,7 +266,7 @@ async function execConfigEntry(key, dirs, config) {
 
         let env = `${await getBin('cross-env')} ESLINT_USE_FLAT_CONFIG=false `;
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
-        let target = `${dirs.join(' ') || '.'} --ext ${ext}`;
+        let target = `${dirs.join(' ') || targetDir} --ext ${ext}`;
 
         cmd = `${env}${await getBin('eslint')} -c ${configPath} ${target} --no-eslintrc`;
 
@@ -311,7 +311,7 @@ async function run() {
 
         console.log();
         console.log('Own directory:');
-        console.log(ownDir);
+        console.log(ownRootDir);
 
         console.log();
         console.log('Target directory:');
