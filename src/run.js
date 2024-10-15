@@ -103,7 +103,7 @@ function getConfig() {
                 configPath = join(targetDir, args[i + 1]);
         }
         else if (i === 0)
-            targetDir = arg;
+            targetDir = require.resolve(arg);
         else if (configKey)
             argConfig[configKey].push(arg);
     }
