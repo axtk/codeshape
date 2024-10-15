@@ -55,7 +55,8 @@ async function setup() {
 
 function showGuide() {
     console.log();
-    console.log('Options:');
+    console.log('Optional parameters:');
+    console.log('  <target directory path> (should be the first parameter, if provided)');
     console.log('  --<config_key> <dir1> <dir2> ...');
     console.log('  --<preset_key> (experimental, currently unused)');
     console.log('  --fix');
@@ -100,6 +101,8 @@ function getConfig() {
             if (key === 'c' && args[i + 1])
                 configPath = join(targetDir, args[i + 1]);
         }
+        else if (i === 0)
+            targetDir = arg;
         else if (configKey)
             argConfig[configKey].push(arg);
     }
