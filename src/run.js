@@ -12,6 +12,7 @@ let targetDir = process.cwd();
 let args = process.argv.slice(2);
 
 let tempTsConfigFileName = 'tsconfig.codeshape.json';
+let tempFiles = [];
 
 let defaultJSExcludes = [
     'dist/**/*.js',
@@ -126,15 +127,42 @@ function getConfig() {
     return {...fileConfig, ...argConfig};
 }
 
-async function createDebugEslintConfig(key, configPath) {
+function updateParserOptions(parserOptions) {
+    if (!parserOptions?.project)
+        return;
+
+    if (typeof parserOptions.project === 'string')
+        parserOptions.project = join(targetDir, parserOptions.project);
+
+    if (Array.isArray(parserOptions.project)) {
+        for (let i = 0; i < parserOptions.project.length; i++)
+            parserOptions.project[i] = join(targetDir, parserOptions.project[i]);
+    }
+
+    return parserOptions;
+}
+
+async function createTempEslintConfig(key, configPath, config) {
+    let path;
+
     try {
-        console.log();
-        console.log('Eslint config:');
-        console.log(configPath);
+        if (config.debug) {
+            console.log();
+            console.log('Eslint config:');
+            console.log(configPath);
+        }
 
         if (configPath) {
             let eslintConfig = require(configPath);
-            let path = join(targetDir, `debug_eslint_config.${key}.json`);
+
+            path = join(targetDir, `eslint.${key}.config.json`);
+            tempFiles.push(path);
+            updateParserOptions(eslintConfig?.parserOptions);
+
+            if (eslintConfig.overrides) {
+                for (let eslintConfigOverride of eslintConfig.overrides)
+                    updateParserOptions(eslintConfigOverride?.parserOptions);
+            }
 
             await writeFile(path, JSON.stringify(eslintConfig, null, 4));
 
@@ -142,9 +170,13 @@ async function createDebugEslintConfig(key, configPath) {
         }
     }
     catch (error) {
-        console.log();
-        console.log(error);
+        if (config.debug) {
+            console.log();
+            console.log(error);
+        }
     }
+
+    return path;
 }
 
 async function createTempTsConfig(dirs, config) {
@@ -159,6 +191,8 @@ async function createTempTsConfig(dirs, config) {
         }
 
         let tempTsConfigFilePath = join(targetDir, tempTsConfigFileName);
+
+        tempFiles.push(tempTsConfigFilePath);
 
         let codeExt = '{js,jsx,ts,tsx}';
         let mdExt = 'md/*.{js,jsx}';
@@ -203,25 +237,25 @@ async function createTempTsConfig(dirs, config) {
     }
 }
 
-async function removeTempTsConfig(config) {
+async function removeTempFiles(config) {
     try {
-        let tempTsConfigFilePath = join(targetDir, tempTsConfigFileName);
+        for (let path of tempFiles) {
+            try {
+                await rm(path);
 
-        try {
-            await rm(tempTsConfigFilePath);
-
-            if (config.debug) {
-                console.log();
-                console.log('Removed temp tsconfig:');
-                console.log(`<< ${tempTsConfigFilePath}`);
+                if (config.debug) {
+                    console.log();
+                    console.log('Removed temp file:');
+                    console.log(`<< ${path}`);
+                }
             }
+            catch {}
         }
-        catch {}
     }
     catch (error) {
         if (config.debug) {
             console.log();
-            console.log('Failed to remove temp tsconfig');
+            console.log('Failed to remove temp files');
             console.log(error);
         }
     }
@@ -245,7 +279,7 @@ async function getBin(name) {
 
 async function execConfigEntry(key, dirs, config) {
     let configPath = join(ownRootDir, 'configs', `${key}.js`);
-    let cmd, tsMode = false;
+    let tempConfigPath, cmd, tsMode = false;
 
     if (stylelintConfigKeys.includes(key)) {
         let root = dirs.length > 1 ? `(${dirs.join('|')})` : dirs.join();
@@ -266,12 +300,13 @@ async function execConfigEntry(key, dirs, config) {
     }
     else {
         tsMode = key !== 'js';
+        tempConfigPath = await createTempEslintConfig(key, configPath, config);
 
         let env = `${await getBin('cross-env')} ESLINT_USE_FLAT_CONFIG=false `;
         let ext = '.js,.jsx' + (tsMode ? ',.ts,.tsx' : '') + ',.md';
-        let target = `${dirs.map(dir => `${targetDir}/${dir}`).join(' ') || targetDir} --ext ${ext}`;
+        let target = `${dirs.map(d => `${targetDir}/${d}`).join(' ') || targetDir} --ext ${ext}`;
 
-        cmd = `${env}${await getBin('eslint')} -c ${configPath} ${target} --no-eslintrc`;
+        cmd = `${env}${await getBin('eslint')} -c ${tempConfigPath} ${target} --no-eslintrc`;
 
         if (!config.noDefaultExcludes) {
             for (let exclude of defaultJSExcludes)
@@ -283,8 +318,6 @@ async function execConfigEntry(key, dirs, config) {
     }
 
     if (config.debug) {
-        await createDebugEslintConfig(key, configPath);
-
         console.log();
         console.log('Command:');
         console.log(cmd);
@@ -376,7 +409,7 @@ async function run() {
         stop(false, config);
     }
     finally {
-        await removeTempTsConfig(config);
+        await removeTempFiles(config);
     }
 }
 
