@@ -1,6 +1,6 @@
 {
   "name": "codeshape",
-  "version": "0.3.30",
+  "version": "1.0.0",
   "description": "A linting utility with a built-in set of code-style rules for JS, TS, and CSS",
   "bin": {
     "codeshape": "src/run.js"
