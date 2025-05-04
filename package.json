@@ -6,13 +6,14 @@
     "codeshape": "dist/run.js"
   },
   "scripts": {
-    "build": "npx npm-run-all lint clean build-bin build-config",
+    "build": "npx npm-run-all clean build-bin build-config",
     "build-bin": "npx esbuild ./src/run.ts --bundle --outdir=dist --platform=node",
     "build-config": "node -e \"require('node:fs').cpSync('src/_biome.json', 'dist/_biome.json');\"",
+    "build-lint": "npx npm-run-all build lint build",
     "clean": "node -e \"require('node:fs').rmSync('dist', {force: true, recursive: true});\"",
     "lint": "node dist/run.js src",
-    "prepublishOnly": "npm run build",
-    "preversion": "npm run build"
+    "prepublishOnly": "npm run build-lint",
+    "preversion": "npm run build-lint"
   },
   "repository": {
     "type": "git",
