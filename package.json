@@ -1,12 +1,18 @@
 {
   "name": "codeshape",
   "version": "1.0.0",
-  "description": "A linting utility with a built-in set of code-style rules for JS, TS, and CSS",
+  "description": "Codestyle utility: linting + formatting",
   "bin": {
-    "codeshape": "src/run.js"
+    "codeshape": "dist/run.js"
   },
   "scripts": {
-    "lint": "node src/run.js --js configs rules src"
+    "build": "npx npm-run-all clean build-bin build-config",
+    "build-bin": "npx esbuild ./src/run.ts --bundle --outdir=dist --platform=node",
+    "build-config": "node -e \"require('node:fs').cpSync('src/_biome.json', 'dist/_biome.json');\"",
+    "clean": "node -e \"require('node:fs').rmSync('dist', {force: true, recursive: true});\"",
+    "lint": "node dist/run.js src",
+    "prepublishOnly": "npm run build",
+    "preversion": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -14,26 +20,11 @@
   },
   "keywords": [
     "code style",
-    "eslint",
-    "typescript-eslint",
-    "stylelint"
+    "lint"
   ],
   "author": "axtk",
   "license": "ISC",
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "5.57.0",
-    "@typescript-eslint/parser": "5.57.0",
-    "cross-env": "7.0.3",
-    "eslint": "8.36.0",
-    "eslint-import-resolver-typescript": "3.5.4",
-    "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-jsx-a11y": "6.7.1",
-    "eslint-plugin-markdown": "3.0.0",
-    "eslint-plugin-prefer-let": "3.0.1",
-    "eslint-plugin-react": "7.32.2",
-    "eslint-plugin-react-hooks": "4.6.0",
-    "eslint-plugin-simple-import-sort": "10.0.0",
-    "stylelint": "15.11.0",
-    "stylelint-config-standard": "32.0.0"
+  "devDependencies": {
+    "@types/node": "22.15.3"
   }
 }
