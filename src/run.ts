@@ -6,6 +6,15 @@ import {promisify} from 'node:util';
 
 const exec = promisify(defaultExec);
 
+const defaultPaths = [
+    'src',
+    'lib',
+    'index.ts',
+    'tests.ts',
+    'index.js',
+    'tests.js',
+];
+
 let tempFiles: string[] = [];
 
 async function run() {
@@ -19,9 +28,25 @@ async function run() {
         tempFiles.push('./biome.json');
     }
 
-    let paths = process.argv.slice(2).join(' ');
+    let paths = process.argv.slice(2);
 
-    await exec(`npx @biomejs/biome check --write ${paths}`);
+    if (paths.length === 0) {
+        paths = (
+            await Promise.all(
+                defaultPaths.map(async path => {
+                    try {
+                        await access(path);
+
+                        return path;
+                    } catch {
+                        return null;
+                    }
+                }),
+            )
+        ).filter(path => path !== null);
+    }
+
+    await exec(`npx @biomejs/biome check --write ${paths.join(' ')}`);
 }
 
 (async () => {
