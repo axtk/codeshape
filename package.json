@@ -6,7 +6,7 @@
     "codeshape": "dist/run.js"
   },
   "scripts": {
-    "build": "npx npm-run-all clean build-bin build-config",
+    "build": "npx npm-run-all lint clean build-bin build-config",
     "build-bin": "npx esbuild ./src/run.ts --bundle --outdir=dist --platform=node",
     "build-config": "node -e \"require('node:fs').cpSync('src/_biome.json', 'dist/_biome.json');\"",
     "clean": "node -e \"require('node:fs').rmSync('dist', {force: true, recursive: true});\"",
