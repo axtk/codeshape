@@ -3,17 +3,9 @@ import {exec as defaultExec} from 'node:child_process';
 import {access, cp, unlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {promisify} from 'node:util';
+import {getPaths} from './getPaths';
 
 const exec = promisify(defaultExec);
-
-const defaultPaths = [
-    'src',
-    'lib',
-    'index.ts',
-    'tests.ts',
-    'index.js',
-    'tests.js',
-];
 
 let tempFiles: string[] = [];
 
@@ -28,25 +20,9 @@ async function run() {
         tempFiles.push('./biome.json');
     }
 
-    let paths = process.argv.slice(2);
-
-    if (paths.length === 0) {
-        paths = (
-            await Promise.all(
-                defaultPaths.map(async path => {
-                    try {
-                        await access(path);
-
-                        return path;
-                    } catch {
-                        return null;
-                    }
-                }),
-            )
-        ).filter(path => path !== null);
-    }
-
-    await exec(`npx @biomejs/biome check --write ${paths.join(' ')}`);
+    await exec(
+        `npx @biomejs/biome check --write ${(await getPaths()).join(' ')}`,
+    );
 }
 
 (async () => {
