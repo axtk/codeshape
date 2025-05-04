@@ -13,8 +13,7 @@ async function run() {
         await Promise.all(
             ['./biome.json', './biome.jsonc'].map(x => access(x)),
         );
-    }
-    catch {
+    } catch {
         await cp(join(__dirname, '_biome.json'), './biome.json');
 
         tempFiles.push('./biome.json');
@@ -28,8 +27,7 @@ async function run() {
 (async () => {
     try {
         await run();
-    }
-    finally {
+    } finally {
         await Promise.all(tempFiles.map(x => unlink(x)));
     }
 })();
