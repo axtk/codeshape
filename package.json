@@ -10,7 +10,7 @@
     "build-bin": "npx esbuild ./src/run.ts --bundle --outdir=dist --platform=node",
     "build-config": "node -e \"require('node:fs').cpSync('src/_biome.json', 'dist/_biome.json');\"",
     "clean": "node -e \"require('node:fs').rmSync('dist', {force: true, recursive: true});\"",
-    "lint": "node dist/run.js",
+    "lint": "node dist/run.js --no-commit",
     "prepublishOnly": "npm run build",
     "preversion": "npm run build"
   },
