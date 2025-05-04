@@ -12,8 +12,8 @@
     "build-lint": "npx npm-run-all build lint build",
     "clean": "node -e \"require('node:fs').rmSync('dist', {force: true, recursive: true});\"",
     "lint": "node dist/run.js src",
-    "prepublishOnly": "npm run build-lint",
-    "preversion": "npm run build-lint"
+    "prepublishOnly": "npm run build",
+    "preversion": "npm run build"
   },
   "repository": {
     "type": "git",
