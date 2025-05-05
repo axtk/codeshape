@@ -76,6 +76,8 @@ function isExecError(x: unknown): x is ExecError {
 
         if (error.stderr) console.log(error.stderr);
         if (error.stdout) console.log(error.stdout);
+
+        process.exit(1);
     } finally {
         await cleanup();
     }
