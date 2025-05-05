@@ -72,13 +72,13 @@ function isExecError(x: unknown): x is ExecError {
     try {
         await run();
     } catch (error) {
+        await cleanup();
+
         if (!isExecError(error)) throw error;
 
         if (error.stderr) console.log(error.stderr);
         if (error.stdout) console.log(error.stdout);
 
         process.exit(1);
-    } finally {
-        await cleanup();
     }
 })();
