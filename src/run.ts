@@ -41,6 +41,7 @@ async function run() {
         `npx @biomejs/biome check --write ${(await getPaths()).join(' ')}`,
     );
 
+    if (stderr) console.log(stderr);
     if (stdout) console.log(stdout);
 
     await cleanup();
