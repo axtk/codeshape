@@ -12,7 +12,8 @@
     "clean": "node -e \"require('node:fs').rmSync('dist', {force: true, recursive: true});\"",
     "lint": "node dist/run.js --no-commit",
     "prepublishOnly": "npm run build",
-    "preversion": "npm run build"
+    "preversion": "npx npm-run-all typecheck build",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   "author": "axtk",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "22.15.3"
+    "@types/node": "22.15.3",
+    "typescript": "^5.9.2"
   }
 }
