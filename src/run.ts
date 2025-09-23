@@ -45,7 +45,7 @@ async function run() {
 
   await cleanup();
 
-  let commitFlagIndex = process.argv.indexOf("--git-commit");
+  let commitFlagIndex = process.argv.indexOf("--commit");
 
   if (!stderr && commitFlagIndex !== -1) {
     let commitMessage = process.argv[commitFlagIndex + 1];
