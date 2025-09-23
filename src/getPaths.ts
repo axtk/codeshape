@@ -1,15 +1,3 @@
-import {access} from 'node:fs/promises';
-
-const defaultPaths = [
-    'src',
-    'lib',
-    'tests',
-    'index.ts',
-    'tests.ts',
-    'index.js',
-    'tests.js',
-];
-
 export async function getPaths(): Promise<string[]> {
     let paths: string[] = [];
 
@@ -22,19 +10,5 @@ export async function getPaths(): Promise<string[]> {
         paths.push(arg);
     }
 
-    if (paths.length !== 0) return paths;
-
-    return (
-        await Promise.all(
-            defaultPaths.map(async path => {
-                try {
-                    await access(path);
-
-                    return path;
-                } catch {
-                    return null;
-                }
-            }),
-        )
-    ).filter(path => path !== null);
+    return paths;
 }
