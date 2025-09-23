@@ -3,6 +3,7 @@ import {access} from 'node:fs/promises';
 const defaultPaths = [
     'src',
     'lib',
+    'tests',
     'index.ts',
     'tests.ts',
     'index.js',
