@@ -1,14 +1,12 @@
 {
-    "include": [
-        "src/run.ts"
-    ],
-    "compilerOptions": {
-        "lib": ["ESNext", "DOM", "DOM.Iterable"],
-        "target": "ESNext",
-        "outDir": "dist",
-        "moduleResolution": "node",
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true
-    }
+  "include": ["src/run.ts"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "target": "ESNext",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  }
 }
