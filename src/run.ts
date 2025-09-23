@@ -4,6 +4,7 @@ import {access, cp, unlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {promisify} from 'node:util';
 import {getPaths} from './getPaths';
+import {isFlag} from './isFlag';
 
 const exec = promisify(defaultExec);
 
@@ -46,7 +47,14 @@ async function run() {
 
     await cleanup();
 
-    if (!stderr && !process.argv.includes('--no-commit')) {
+    let commitFlagIndex = process.argv.indexOf('--git-commit');
+
+    if (!stderr && commitFlagIndex !== -1) {
+        let commitMessage = process.argv[commitFlagIndex + 1];
+
+        if (!commitMessage || isFlag(commitMessage))
+            commitMessage = 'lint';
+
         try {
             await exec('git add *');
 
@@ -54,7 +62,7 @@ async function run() {
                 (await exec('git diff --cached --name-only')).stdout.trim() !==
                 '';
 
-            if (updated) await exec('git commit -m "lint"');
+            if (updated) await exec(`git commit -m ${JSON.stringify(commitMessage)}`);
         } catch {}
     }
 }
