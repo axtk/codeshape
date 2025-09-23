@@ -7,6 +7,7 @@ import { getPaths } from "./getPaths";
 import { isFlag } from "./isFlag";
 
 const exec = promisify(defaultExec);
+const { argv } = process;
 
 let tempFiles: string[] = [];
 
@@ -27,6 +28,12 @@ async function cleanup() {
   ).filter((path) => path !== null);
 }
 
+function getCommitMessage() {
+  let k = argv.indexOf("-m");
+
+  return k !== -1 && argv[k + 1] && !isFlag(argv[k + 1]) ? argv[k + 1] : "lint";
+}
+
 async function run() {
   try {
     await Promise.all(["./biome.json", "./biome.jsonc"].map((x) => access(x)));
@@ -45,20 +52,14 @@ async function run() {
 
   await cleanup();
 
-  let commitFlagIndex = process.argv.indexOf("--commit");
-
-  if (!stderr && commitFlagIndex !== -1) {
-    let commitMessage = process.argv[commitFlagIndex + 1];
-
-    if (!commitMessage || isFlag(commitMessage)) commitMessage = "lint";
-
+  if (!stderr && !argv.includes("--no-commit")) {
     try {
       await exec("git add *");
 
       let updated =
         (await exec("git diff --cached --name-only")).stdout.trim() !== "";
 
-      if (updated) await exec(`git commit -m ${JSON.stringify(commitMessage)}`);
+      if (updated) await exec(`git commit -m ${JSON.stringify(getCommitMessage())}`);
     } catch {}
   }
 }
