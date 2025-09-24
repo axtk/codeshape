@@ -6,6 +6,7 @@
   "linter": {
     "rules": {
       "style": {
+        "noNonNullAssertion": "off",
         "useConst": "off"
       }
     }
