@@ -5,6 +5,10 @@
   },
   "linter": {
     "rules": {
+      "a11y": {
+        "noAutofocus": "off",
+        "useButtonType": "off"
+      },
       "style": {
         "noNonNullAssertion": "off",
         "useConst": "off"
