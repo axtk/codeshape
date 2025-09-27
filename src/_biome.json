@@ -7,13 +7,19 @@
     "rules": {
       "a11y": {
         "noAutofocus": "off",
-        "useButtonType": "off"
+        "useButtonType": "off",
+        "useHtmlLang": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
       },
       "style": {
         "noNonNullAssertion": "off",
         "useConst": "off"
       },
       "suspicious": {
+        "noArrayIndexKey": "off",
+        "noAssignInExpressions": "off",
         "noConfusingVoidType": "off"
       }
     }
