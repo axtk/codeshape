@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { exec as defaultExec } from "node:child_process";
-import { access, cp, unlink } from "node:fs/promises";
+import { access, readFile, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { getPaths } from "./getPaths";
@@ -34,11 +34,31 @@ function getCommitMessage() {
   return k !== -1 && argv[k + 1] && !isFlag(argv[k + 1]) ? argv[k + 1] : "lint";
 }
 
+type BiomeConfig = {
+  vcs?: {
+    enabled?: boolean;
+  };
+};
+
 async function run() {
+  let isGitDir = false;
+
+  try {
+    await access("./.git");
+    isGitDir = true;
+  }
+  catch {}
+
   try {
     await Promise.all(["./biome.json", "./biome.jsonc"].map((x) => access(x)));
   } catch {
-    await cp(join(__dirname, "_biome.json"), "./biome.json");
+    let configPath = join(__dirname, "_biome.json");
+    let config = JSON.parse((await readFile(configPath)).toString()) as BiomeConfig;
+
+    if (config.vcs)
+      config.vcs.enabled = isGitDir;
+
+    await writeFile("./biome.json", JSON.stringify(config, null, 2));
 
     tempFiles.push("./biome.json");
   }
@@ -52,7 +72,7 @@ async function run() {
 
   await cleanup();
 
-  if (!stderr && !argv.includes("--no-commit")) {
+  if (isGitDir && !stderr && !argv.includes("--no-commit")) {
     try {
       await exec("git add *");
 
