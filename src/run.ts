@@ -35,6 +35,9 @@ function getCommitMessage() {
 }
 
 type BiomeConfig = {
+  files?: {
+    includes?: string[];
+  };
   vcs?: {
     enabled?: boolean;
   };
@@ -42,10 +45,20 @@ type BiomeConfig = {
 
 async function run() {
   let isGitDir = false;
+  let includes: string[] = [];
 
   try {
     await access("./.git");
     isGitDir = true;
+  }
+  catch {}
+
+  try {
+    includes = (await readFile("./.biomeincludes"))
+      .toString()
+      .trim()
+      .split(/\r?\n/)
+      .filter(x => x !== "");
   }
   catch {}
 
@@ -55,8 +68,16 @@ async function run() {
     let configPath = join(__dirname, "_biome.json");
     let config = JSON.parse((await readFile(configPath)).toString()) as BiomeConfig;
 
-    if (config.vcs)
-      config.vcs.enabled = isGitDir;
+    config.vcs = {
+      ...config.vcs,
+      enabled: isGitDir,
+    };
+
+    if (includes.length !== 0)
+      config.files = {
+        ...config.files,
+        includes,
+      };
 
     await writeFile("./biome.json", JSON.stringify(config, null, 2));
 
