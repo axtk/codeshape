@@ -62,9 +62,19 @@ async function run() {
   }
   catch {}
 
-  try {
-    await Promise.all(["./biome.json", "./biome.jsonc"].map((x) => access(x)));
-  } catch {
+  let hasOwnConfig = (await Promise.all(
+    ["./biome.json", "./biome.jsonc"].map(async (path) => {
+      try {
+        await access(path);
+        return true;
+      }
+      catch {
+        return false;
+      }
+    }),
+  )).includes(true);
+
+  if (!hasOwnConfig) {
     let configPath = join(__dirname, "_biome.json");
     let config = JSON.parse((await readFile(configPath)).toString()) as BiomeConfig;
 
