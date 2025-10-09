@@ -80,7 +80,7 @@ async function run() {
 
     config.vcs = {
       ...config.vcs,
-      enabled: isGitDir,
+      enabled: isGitDir && !argv.includes("--vcs-disabled"),
     };
 
     if (includes.length !== 0)
