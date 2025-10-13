@@ -7,6 +7,8 @@ import { getPaths } from "./getPaths";
 import { isFlag } from "./isFlag";
 
 const exec = promisify(defaultExec);
+const execOutput = async (cmd: string) => (await exec(cmd)).stdout.trim();
+
 const { argv } = process;
 
 let tempFiles: string[] = [];
@@ -35,6 +37,7 @@ function getCommitMessage() {
 }
 
 type BiomeConfig = {
+  $schema?: string;
   files?: {
     includes?: string[];
   };
@@ -78,6 +81,13 @@ async function run() {
     let configPath = join(__dirname, "_biome.json");
     let config = JSON.parse((await readFile(configPath)).toString()) as BiomeConfig;
 
+    if (config.$schema) {
+      let version = await execOutput("npm view @biomejs/biome version");
+
+      if (version)
+        config.$schema = config.$schema.replace(/\/\d+\.\d+\.\d+\//, `/${version}/`);
+    }
+
     config.vcs = {
       ...config.vcs,
       enabled: isGitDir && !argv.includes("--vcs-disabled"),
@@ -107,8 +117,7 @@ async function run() {
     try {
       await exec("git add *");
 
-      let updated =
-        (await exec("git diff --cached --name-only")).stdout.trim() !== "";
+      let updated = (await execOutput("git diff --cached --name-only")) !== "";
 
       if (updated) await exec(`git commit -m ${JSON.stringify(getCommitMessage())}`);
     } catch {}
