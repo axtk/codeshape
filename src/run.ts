@@ -81,12 +81,7 @@ async function run() {
     let configPath = join(__dirname, "_biome.json");
     let config = JSON.parse((await readFile(configPath)).toString()) as BiomeConfig;
 
-    if (config.$schema) {
-      let version = await execOutput("npm view @biomejs/biome version");
-
-      if (version)
-        config.$schema = config.$schema.replace(/\/\d+\.\d+\.\d+\//, `/${version}/`);
-    }
+    delete config.$schema;
 
     config.vcs = {
       ...config.vcs,
