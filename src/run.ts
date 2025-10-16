@@ -30,6 +30,16 @@ async function cleanup() {
   ).filter((path) => path !== null);
 }
 
+async function canAccess(path: string) {
+  try {
+    await access(path);
+    return true;
+  }
+  catch {
+    return false;
+  }
+}
+
 function getCommitMessage() {
   let k = argv.indexOf("-m");
 
@@ -43,18 +53,14 @@ type BiomeConfig = {
   };
   vcs?: {
     enabled?: boolean;
+    clientKind?: string;
+    useIgnoreFile?: boolean;
   };
 };
 
 async function run() {
-  let isGitDir = false;
   let includes: string[] = [];
-
-  try {
-    await access("./.git");
-    isGitDir = true;
-  }
-  catch {}
+  let isGitDir = await canAccess("./.git");
 
   try {
     includes = (await readFile("./.biomeincludes"))
@@ -66,15 +72,7 @@ async function run() {
   catch {}
 
   let hasOwnConfig = (await Promise.all(
-    ["./biome.json", "./biome.jsonc"].map(async (path) => {
-      try {
-        await access(path);
-        return true;
-      }
-      catch {
-        return false;
-      }
-    }),
+    ["./biome.json", "./biome.jsonc"].map(canAccess),
   )).includes(true);
 
   if (!hasOwnConfig) {
@@ -87,6 +85,9 @@ async function run() {
       ...config.vcs,
       enabled: isGitDir && !argv.includes("--vcs-disabled"),
     };
+
+    if (config.vcs.clientKind === "git" && config.vcs.useIgnoreFile)
+      config.vcs.useIgnoreFile = await canAccess("./.gitignore");
 
     if (includes.length !== 0)
       config.files = {
