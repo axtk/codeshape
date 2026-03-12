@@ -47,7 +47,10 @@ async function run() {
   let formatIndex = scripts.indexOf("format");
 
   // Combine linting and formatting, if these tasks are adjacent in the list
-  let shouldLintFormatCombined = lintIndex !== -1 && formatIndex !== -1 && Math.abs(lintIndex - formatIndex) === 1;
+  let shouldLintFormatCombined =
+    lintIndex !== -1 &&
+    formatIndex !== -1 &&
+    Math.abs(lintIndex - formatIndex) === 1;
 
   for (let name of scripts) {
     switch (name) {

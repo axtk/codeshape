@@ -32,7 +32,10 @@ export type LintFormatOptions = {
   format?: boolean;
 };
 
-export async function runLintFormat({ lint = true, format = true }: LintFormatOptions = {}) {
+export async function runLintFormat({
+  lint = true,
+  format = true,
+}: LintFormatOptions = {}) {
   let t0 = Date.now();
   let message = "Lint";
   let cmd = "lint";
@@ -40,8 +43,7 @@ export async function runLintFormat({ lint = true, format = true }: LintFormatOp
   if (lint && format) {
     message = "Lint and format";
     cmd = "check";
-  }
-  else if (format) {
+  } else if (format) {
     message = "Format";
     cmd = "format";
   }
