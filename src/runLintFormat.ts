@@ -27,9 +27,26 @@ const supportedIncludeFiles = [
 ];
 const preferredIncludeFile = supportedIncludeFiles[0];
 
-export async function runLintFormat() {
+export type LintFormatOptions = {
+  lint?: boolean;
+  format?: boolean;
+};
+
+export async function runLintFormat({ lint = true, format = true }: LintFormatOptions = {}) {
   let t0 = Date.now();
-  log("Lint and format [biome]");
+  let message = "Lint";
+  let cmd = "lint";
+
+  if (lint && format) {
+    message = "Lint and format";
+    cmd = "check";
+  }
+  else if (format) {
+    message = "Format";
+    cmd = "format";
+  }
+
+  log(`${message} [biome]`);
 
   let includes: string[] = [];
   let isGitDir = await canAccess("./.git");
@@ -92,7 +109,7 @@ export async function runLintFormat() {
   }
 
   let { stdout, stderr } = await exec(
-    `biome check --write ${(await getPaths()).join(" ")}`,
+    `biome ${cmd} --write ${(await getPaths()).join(" ")}`,
   );
   log(`${formatDuration(Date.now() - t0)}\n`);
 

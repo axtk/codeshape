@@ -10,7 +10,7 @@
     "clean": "node -e \"require('node:fs').rmSync('dist', { force: true, recursive: true });\"",
     "compile": "npx esbuild ./src/run.ts --bundle --outdir=dist --platform=node --format=esm",
     "preversion": "npx npm-run-all clean compile update-dist shape",
-    "shape": "node dist/run.js --no-compile",
+    "shape": "node dist/run.js check",
     "update-dist": "node src/scripts/updateDist.ts"
   },
   "repository": {
