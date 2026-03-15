@@ -17,6 +17,7 @@ Performed tasks:
   - use a `.lintinclude` plain-text file to list specific path patterns to be handled by this task (in a format similar to `.gitignore`) (default: the entire current directory), mark excluded paths with a leading `!` in this file
 - `compile` (with `tsdown`)
   - use `--no-dts` to skip emitting a type declaration file
+  - use `--esm-only` to produce only an ESM `.js` file (default: ESM `.mjs` and CJS `.cjs`)
   - use `--compile-input <...space-separated paths>` (default: `./index.ts`) and `--compile-output <path>` (default: `./dist`) to set an entry point and an output directory
   - use `--compile-platform` to set a target platform (default: `node`, other options: `browser`, `neutral`)
   - use `--minify` to minify the output

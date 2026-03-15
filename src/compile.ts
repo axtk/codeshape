@@ -13,20 +13,24 @@ export async function compile() {
   log("Compile [tsdown]");
 
   let input = getArgValues("--compile-input", ["./index.ts"]);
-  let output = getArgValue("--compile-output", "./dist");
+  let outputDir = getArgValue("--compile-output", "./dist");
   let platform = getArgValue("--compile-platform");
   let tsConfigPath = getArgValue("--tsconfig");
 
+  let esmOnly = argv.includes("--esm-only");
+  let hasDts = !argv.includes("--no-dts");
+
   let params = [
     input.join(" "),
-    `-d ${output}`,
-    "--format esm",
-    "--format cjs",
-    !argv.includes("--no-dts") && "--dts",
+    `-d ${outputDir}`,
+    hasDts && "--dts",
     argv.includes("--minify") && "--minify",
     platform && `--platform ${platform}`,
     tsConfigPath && `--tsconfig ${tsConfigPath}`,
+    "--format esm",
   ].filter((x) => typeof x === "string");
+
+  if (!esmOnly) params.push("--format cjs");
 
   let { stdout, stderr } = await exec(`tsdown ${params.join(" ")}`);
   log(`${formatDuration(Date.now() - t0)}\n`);
@@ -35,17 +39,17 @@ export async function compile() {
   if (stdout) console.log(stdout);
 
   try {
-    await unlink(join(output, "index.d.cts"));
+    await unlink(join(outputDir, "index.d.cts"));
   } catch {}
 
   try {
-    await rename(join(output, "index.d.mts"), join(output, "index.d.ts"));
+    await rename(join(outputDir, "index.d.mts"), join(outputDir, "index.d.ts"));
   } catch {}
 
   await Promise.all(
     ["index.cjs", "index.mjs", "index.d.ts"].map(async (name) => {
       try {
-        let path = join(output, name);
+        let path = join(outputDir, name);
         let s = (await readFile(path)).toString();
 
         s = s
@@ -60,11 +64,21 @@ export async function compile() {
     }),
   );
 
-  let affectedPackageProps = {
-    main: `${output}/index.cjs`,
-    module: `${output}/index.mjs`,
-    types: `${output}/index.d.ts`,
-  };
+  let outputFiles: Record<string, string> = {};
 
-  console.log(JSON.stringify(affectedPackageProps, null, 2));
+  if (esmOnly) {
+    try {
+      await rename(join(outputDir, "index.mjs"), join(outputDir, "index.js"));
+    } catch {}
+
+    outputFiles.main = `${outputDir}/index.js`;
+  }
+  else {
+    outputFiles.main = `${outputDir}/index.cjs`;
+    outputFiles.module = `${outputDir}/index.mjs`;
+  }
+
+  if (hasDts) outputFiles.types = `${outputDir}/index.d.ts`;
+
+  console.log(JSON.stringify(outputFiles, null, 2));
 }
