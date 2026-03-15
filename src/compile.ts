@@ -72,8 +72,7 @@ export async function compile() {
     } catch {}
 
     outputFiles.main = `${outputDir}/index.js`;
-  }
-  else {
+  } else {
     outputFiles.main = `${outputDir}/index.cjs`;
     outputFiles.module = `${outputDir}/index.mjs`;
   }
